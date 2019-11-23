@@ -1,4 +1,5 @@
-gravity = 9
+GRAVITY = 9
+
 class Bird(pygame.sprite.Sprite):
     move = 9
     bird_size = (50,50)
@@ -31,7 +32,7 @@ class Bird(pygame.sprite.Sprite):
 
     def drop(self):
         """make the bird fall"""
-        newpos = self.rect.move((0, gravity))
+        newpos = self.rect.move((0, GRAVITY))
         self.rect = newpos
         if self.rect.top >= self.area.height:
             print("DEAD!")
