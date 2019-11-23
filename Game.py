@@ -29,28 +29,26 @@ class Game:
         if pygame.font:
             font = pygame.font.Font(None, 36)
             text = font.render("STACK THE BIRDSSSSSSSS", 1, (10, 10, 10))
-            textpos = text.get_rect(centerx=background.get_width()/2)
+            textpos = text.get_rect(centerx=self.background.get_width()/2)
             self.background.blit(text, textpos)
-        self.screen.blit(background, (0,0))
+        self.screen.blit(self.background, (0,0))
         pygame.display.flip()
-        self.allsprites = pygame.sprite.RenderUpdates
-    def run():
-        allsprites = pygame.sprite.RenderUpdates()
-        clock = pygame.time.Clock()
+        self.allsprites = pygame.sprite.RenderUpdates()
+        self.clock = pygame.time.Clock()
+    def run(self):
         while 1:
-            clock.tick(60)
+            self.clock.tick(60)
             for event in pygame.event.get():
                 if event.type == QUIT:
                     return
                 elif event.type == KEYDOWN and event.key == K_ESCAPE:
                     return
                 elif event.type == MOUSEBUTTONDOWN:
-                    allsprites.add(Bird())
+                    self.allsprites.add(Bird())
                 elif event.type == MOUSEBUTTONUP:
-                    for sprite in allsprites.sprites():
+                    for sprite in self.allsprites.sprites():
                         sprite.dropping = True
-            allsprites.update()
-            print(len(allsprites.sprites()))
-            dir = allsprites.draw(screen)
+            self.allsprites.update()
+            dir = self.allsprites.draw(self.screen)
             pygame.display.update(dir)
-            allsprites.clear(screen,background)
+            self.allsprites.clear(self.screen,self.background)
