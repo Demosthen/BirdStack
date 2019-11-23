@@ -1,3 +1,7 @@
+import pygame
+import os, sys
+from pygame.locals import *
+
 def load_image(name, colorkey=None, sizes = (50,50)):
     fullname = os.path.join('data', name)
     try:
@@ -12,6 +16,7 @@ def load_image(name, colorkey=None, sizes = (50,50)):
             colorkey = image.get_at((0, 0))
         image.set_colorkey(colorkey, RLEACCEL)
     return image, image.get_rect()
+
 def load_sound(name):
     class NoneSound:
         def play(self): pass

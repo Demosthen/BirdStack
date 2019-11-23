@@ -1,4 +1,7 @@
 import random
+import os, sys
+import pygame
+from pygame.locals import *
 class ZippedBird(pygame.sprite.Sprite):
     move = 9
     bird_size = (50,50)
@@ -67,6 +70,6 @@ class ZippedBird(pygame.sprite.Sprite):
                 newpos = self.rect.move((self.move, 0))
         self.rect = newpos
 
-    def load_spliced_image(self, bird, length):# bird is a string
+    def load_spliced_image(self, bird, length):# bird is a string, length is length of image
         #YOUR CODE HERE
         pass
