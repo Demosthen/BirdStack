@@ -1,8 +1,8 @@
 import os, sys
 import pygame
 from pygame.locals import *
-import Bird
-import Load
+from Bird import Bird
+from Load import *
 
 if not pygame.font: print('Warning, fonts disabled')
 if not pygame.mixer: print('Warning, sound disabled')
@@ -21,7 +21,7 @@ def run():
         background.blit(text, textpos)
     screen.blit(background, (0,0))
     pygame.display.flip()
-    allsprites = pygame.sprite.RenderPlain()
+    allsprites = pygame.sprite.RenderUpdates()
     clock = pygame.time.Clock()
     while 1:
         clock.tick(60)
@@ -37,7 +37,8 @@ def run():
                     sprite.dropping = True
         allsprites.update()
         print(len(allsprites.sprites()))
-        screen.blit(background, (0,0))
-        allsprites.draw(screen)
-        pygame.display.flip()
+        dir = allsprites.draw(screen)
+        pygame.display.update(dir)
+        allsprites.clear(screen,background)
+        #pygame.display.flip()
 run()

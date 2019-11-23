@@ -1,3 +1,6 @@
+import pygame
+from Load import *
+
 gravity = 9
 class Bird(pygame.sprite.Sprite):
     move = 9
