@@ -10,8 +10,9 @@ class Game:
     def __init__(self, screensize = (468,468)):
         self.bird_density = "placeholder"
         self.score = 0
-        self.left_bound = 100 #top layer left_bound
-        self.right_bound = 300 #top layer right_bound
+        self.screen = pygame.display.set_mode(screensize)
+        self.left_bound = self.screen.get_width()//2-100 #top layer left_bound
+        self.right_bound = self.screen.get_width()//2+100 #top layer right_bound
         self.murders = {"BIRDIE": 0,
                         "FATSO": 0,
                         "SQUIDDY": 0,
@@ -25,7 +26,6 @@ class Game:
         self.gui_sprites = { "PAUSE_PLAY" : "scooter.png",
                             "RESTART" : "scooter.png" }
         pygame.init()
-        self.screen = pygame.display.set_mode(screensize)
         pygame.display.set_caption("BIRD STACK")
         self.bigSurface = pygame.Surface((self.screen.get_width(), self.screen.get_height() * 20))
         self.background = pygame.Surface(self.bigSurface.get_size())
@@ -42,7 +42,7 @@ class Game:
         self.bigSurface.blit(self.background, (0,0)) # TODO: pass area Rect to display only part of it
         self.screen.blit(self.bigSurface, (0,0), area = self.calcScreenRect())
         pygame.display.flip()
-        self.tolerance = 20# TODO: ADJUST LATER
+        self.tolerance = 500# TODO: ADJUST LATER
         self.allsprites = pygame.sprite.RenderUpdates()
         self.murdered = pygame.sprite.RenderUpdates()
         self.tower = CustomGroup()
@@ -87,27 +87,27 @@ class Game:
         flock.stationary = True
 
 
-        x = min(flock.rect.right, self.right_bound)
-        y = flock.rect.y
+        x = (min(flock.rect.right, self.right_bound) + max(flock.rect.left, self.left_bound))/2
+        #x = flock.rect.centerx
+        y = flock.rect.centery
         length = min(flock.rect.right, self.right_bound) - max(flock.rect.left, self.left_bound) #resize
         if length<5:
             return "u suck u lose"
-
         #FIX MUDRDERED BIRDS
-        if (self.right_bound - flock.rect.right > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
-            for i in range((self.right_bound - flock.rect.right)//bird_width):
-                self.murdered.add(MurderedBird(self,(flock.rect.right - bird_width*i, flock.rect.y)))
-                #TODO: check if there's a special in there so that you generate a dead one of those
-                pass
-        if (flock.rect.left - self.left_bound > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
-            for i in range((flock.rect.left - self.right_bound)//bird_width):
-                self.murdered.add(MurderedBird(self,(flock.rect.left + bird_width*i, flock.rect.y)))
+        # if (self.right_bound - flock.rect.right > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
+        #     for i in range((self.right_bound - flock.rect.right)//bird_width):
+        #         self.murdered.add(MurderedBird(self,(flock.rect.right - bird_width*i, flock.rect.y)))
+        #         #TODO: check if there's a special in there so that you generate a dead one of those
+        #
+        # if (flock.rect.left - self.left_bound > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
+        #     for i in range((flock.rect.left - self.right_bound)//bird_width):
+        #         self.murdered.add(MurderedBird(self,(flock.rect.left + bird_width*i, flock.rect.y)))
 
         #TODO: do special effects
 
 
-        self.right_bound = flock.rect.right #resets left and right bounds
-        self.left_bound = flock.rect.left
+        self.right_bound = min(flock.rect.right, self.right_bound) #resets left and right bounds
+        self.left_bound = max(flock.rect.left, self.left_bound)
 
         #self.towerSprites.add(self.flock)
         flock.kill()
@@ -144,8 +144,8 @@ class Game:
         base.stationary = True
         self.tower.add(base)
         #self.allsprites.add(base)
-        pos_y = min([each.rect.y for each in self.tower.sprites()]) - 50#self.tower.sprites()[0].bird_size[1]
-        moving = ZippedBird(self,length,self.fromBiggiePoint((200, pos_y)))
+        pos_y = min([each.rect.y for each in self.tower.sprites()]) -25#self.tower.sprites()[0].bird_size[1]
+        moving = ZippedBird(self,length,self.fromBiggiePoint((self.screen.get_width()/2, pos_y)))
         while play:
             stopped = False
             #print(len(self.zipBird.sprites()))

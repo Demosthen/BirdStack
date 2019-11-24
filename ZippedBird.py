@@ -5,24 +5,25 @@ import Load
 from pygame.locals import *
 import Game
 class ZippedBird(pygame.sprite.Sprite):
-    move = 9
+    move = 3
     bird_size = (50,50)
     image_dict = {"BIRDIE": "scooter.png",
-                    "FATSO": "scooter.png",
+                    "FATSO": "fatso.jpg",
                     "SQUIDDY": "scooter.png",
-                    "INVINCIBLE": "scooter.png",
-                    "TREE": "scooter.png"}
+                    "INVINCIBLE": "invincible.jpg",
+                    "TREE": "tree.png"}
+    need_append = {"BIRDIE": 0,# 1 if need to increase length, 0 if don't need to increase length
+                    "FATSO": 1,
+                    "SQUIDDY": 1,
+                    "INVINCIBLE": 0,
+                    "TREE": 0}
 
 
     def __init__(self, game, length,startPos = (250,100)):
         pygame.sprite.Sprite.__init__(self)
         self.length = length
         self.game = game
-        self.image, self.rect = self.edit_image( self.length, False)
-        screen = pygame.display.get_surface()
-        self.stationary = False
-        self.rect.center = self.game.translatePoint(startPos)
-        self.area = screen.get_rect() # TODO: UPDATE THIS ACCORDING TO GAME SCREEN POSITION
+
         self.left_prob_dict = {"BIRDIE": 6,
                         "FATSO": 1,
                         "SQUIDDY": 1,
@@ -43,17 +44,23 @@ class ZippedBird(pygame.sprite.Sprite):
         for each in self.groups:
             each.add(self)
         #use getSpecial() to determine if you're going to have a special bird
-        type = self.getSpecial()
+        self.bird_type, self.on_right = self.getSpecial()
+        self.image, self.rect = self.edit_image( self.length, False)
+        screen = pygame.display.get_surface()
+        self.stationary = False
+        self.rect.center = self.game.translatePoint(startPos)
+
+        self.area = screen.get_rect() # TODO: UPDATE THIS ACCORDING TO GAME SCREEN POSITION
         #self.length = game.right_bound - game.left_bound
-        if type == "BIRDIE":
+        if self.bird_type == "BIRDIE":
             pass
-        elif type == "FATSO":
+        elif self.bird_type == "FATSO":
             pass
-        elif type == "SQUIDDY":
+        elif self.bird_type == "SQUIDDY":
             pass
-        elif type == "INVINCIBLE":
+        elif self.bird_type == "INVINCIBLE":
             pass
-        elif type == "TREE":
+        elif self.bird_type == "TREE":
             pass
 
 
@@ -145,10 +152,12 @@ class ZippedBird(pygame.sprite.Sprite):
 
     def edit_image(self, length, on_right, splicing = True): #TODO: splice to add/delete part of the image
         #YOUR CODE HERE
-        return self.splice_image([Load.load_image('scooter.png', -1, (length//3,self.bird_size[1]))[0],Load.load_image('scooter.png', -1, (length//3,self.bird_size[1]))[0], Load.load_image('scooter.png', -1, (length//3,self.bird_size[1]))[0]])
-        
+        imgs = [0,0]
+        imgs[on_right] = Load.load_image(self.image_dict[self.bird_type], -1,self.bird_size)[0]
+        imgs[not on_right] = Load.load_image('scooter.png', -1, (length - self.bird_size[0],self.bird_size[1]))[0]
+        return self.splice_image(imgs)
 
-    def splice_image(self, imgs):
+    def splice_image(self, imgs):#concatenates a list of images into one surface
         total_width = sum([i.get_width() for i in imgs])
         max_height = max([i.get_height() for i in imgs])
         new_img = pygame.Surface((total_width, max_height))
