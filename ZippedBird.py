@@ -38,10 +38,24 @@ class ZippedBird(pygame.sprite.Sprite):
                         "TREE": self.apply_tree}
         self.updateLeftProb()
         self.updateRightProb()
-        self.groups = [game.zipBird,game.allsprites]
+        self.groups = [game.zipBird, game.allsprites]
         for each in self.groups:
             each.add(self)
         #use getSpecial() to determine if you're going to have a special bird
+        type = self.getSpecial()
+        self.length = game.right_bound - game.left_bound
+        if type == "BIRDIE":
+            pass
+        elif type == "FATSO":
+            pass
+        elif type == "SQUIDDY":
+            pass
+        elif type == "INVINCIBLE":
+            pass
+        elif type == "TREE":
+            pass
+
+
         #splice images and do stuff
         #actually make the thing show up
 
@@ -61,6 +75,17 @@ class ZippedBird(pygame.sprite.Sprite):
             else:
                 special_rand -= item[1]
         return item[0], on_right #returns string of bird type and boolean whether it's on the right side
+
+    """
+    conditions for creating each of the bird types:
+    all specials    : must have enough length to display a full bird
+                      must not be in invincibility mode (different image?)
+    TREE:           : game.left_bound > somenumber, game.right_bound < somenumber
+    FATSO:          : must be < max screen length - one bird length
+    INVINCIBLE:     :
+    SQUIDDY:        : must be < max screen length - one bird length
+
+    """
 
     def updateLeftProb(self):
         #YOUR CODE HERE

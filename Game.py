@@ -97,7 +97,7 @@ class Game:
         #TODO: do special effects
         self.flock.rect.left = max(flock.rect.left, self.left_bound) #resize
         self.flock.rect.right = min(flock.rect.right, self.right_bound)
-        
+
 
 
         self.right_bound = flock.rect.right #resets left and right bounds
@@ -106,6 +106,12 @@ class Game:
         #self.towerSprites.add(self.flock)
         flock.kill()
         self.towerSprites.add(zipBird(  ) )
+    """if (some key down):
+        place self.flock/moving/whatever you called it
+        check to see if the game has ended
+            if so, self.endGame()
+        create a newZippedBird"""
+
 
     def check_GUI(self): #pause/play, restart; sprites, will get added into allsprites
         pass
