@@ -81,6 +81,7 @@ class ZippedBird(pygame.sprite.Sprite):
     def resize(self, newLength):
         new = pygame.transform.scale(self.image, (newLength, self.image.get_height()))
         self.image, self.rect = new, new.get_rect()
+        self.length = newLength
 
     def relocate(self, newLoc):
         self.rect.center = self.game.translatePoint(newLoc)
@@ -186,6 +187,7 @@ class ZippedBird(pygame.sprite.Sprite):
     def edit_image(self, length, splicing = True):
         #YOUR CODE HERE
         imgs = [0,0]
+        print(length)
         if self.bird_type == "BIRDIE":
             img = Load.load_image('scooter.png', -1, (length,self.bird_size[1]))[0]
             return img, img.get_rect()
