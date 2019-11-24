@@ -144,12 +144,16 @@ class ZippedBird(pygame.sprite.Sprite):
         self.splice_image(length_built, on_right, False)
 
     def edit_image(self, length, on_right, splicing = True): #TODO: splice to add/delete part of the image
-        #YOUR CODE HERE4
-        return self.splice_image(Load.load_image('scooter.png', -1, (length//2,self.bird_size[1]))[0],Load.load_image('scooter.png', -1, (length//2,self.bird_size[1]))[0])
+        #YOUR CODE HERE
+        return self.splice_image([Load.load_image('scooter.png', -1, (length//3,self.bird_size[1]))[0],Load.load_image('scooter.png', -1, (length//3,self.bird_size[1]))[0], Load.load_image('scooter.png', -1, (length//3,self.bird_size[1]))[0]])
         pass
 
-    def splice_image(self, left_img, right_img):
-        new_img = pygame.Surface((left_img.get_width() + right_img.get_width(), max(left_img.get_height(), right_img.get_height())))
-        new_img.blit(left_img, (0,0))
-        new_img.blit(right_img, (left_img.get_width(), 0))
+    def splice_image(self, imgs):
+        total_width = sum([i.get_width() for i in imgs])
+        max_height = max([i.get_height() for i in imgs])
+        new_img = pygame.Surface((total_width, max_height))
+        pos = 0
+        for i in imgs:
+            new_img.blit(i, (pos, 0))
+            pos += i.get_width()
         return new_img, new_img.get_rect()
