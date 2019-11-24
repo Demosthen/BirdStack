@@ -69,13 +69,11 @@ class Game:
 
         if (self.right_bound - self.flock.rect.right > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
             for i in range((self.right_bound - self.flock.rect.right)//bird_width):
-                self.deadbirdsprites.add(MurderedBird((self.flock.rect.right - bird_width*i), self.flock.rect.y))
+                self.deadbirdsprites.add(MurderedBird((self.flock.rect.right - bird_width*i, self.flock.rect.y)))
                 #TODO: check if there's a special in there so that you generate a dead one of those
-                pass
         if (self.flock.rect.left - self.left_bound > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
             for i in range((self.flock.rect.left - self.right_bound)//bird_width):
-                self.deadbirdsprites.add(MurderedBird((self.flock.rect.left + bird_width*i), self.flock.rect.y))
-                pass
+                self.deadbirdsprites.add(MurderedBird((self.flock.rect.left + bird_width*i, self.flock.rect.y)))
 
         self.right_bound = self.flock.rect.right
         self.left_bound = self.flock.rect.left
