@@ -10,8 +10,8 @@ class Game:
     def __init__(self, screensize = (468,468)):
         self.bird_density = "placeholder"
         self.score = 0
-        self.left_bound = 0 #top layer left_bound
-        self.right_bound = 0 #top layer right_bound
+        self.left_bound = 100 #top layer left_bound
+        self.right_bound = 300 #top layer right_bound
         self.murders = {"BIRDIE": 0,
                         "FATSO": 0,
                         "SQUIDDY": 0,
@@ -80,32 +80,41 @@ class Game:
         flock = self.zipBird.sprites()[0]
         bird_width = MurderedBird.bird_size[0]
         if abs(self.right_bound - flock.rect.right) <= self.tolerance: #move it over if within certain tolerance
-            flock.rect.move(right_bound - flock.rect.right, 0)
+            flock.rect.move(self.right_bound - flock.rect.right, 0)
         elif abs(self.left_bound - flock.rect.left) <= self.tolerance:
             flock.rect.move(self.left_bound - flock.rect.left, 0)
         flock.stationary = True
 
+        #FIX MUDRDERED BIRDS
         if (self.right_bound - flock.rect.right > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
             for i in range((self.right_bound - flock.rect.right)//bird_width):
-                self.deadbirdsprites.add(MurderedBird(self,(flock.rect.right - bird_width*i, flock.rect.y)))
+                self.murdered.add(MurderedBird(self,(flock.rect.right - bird_width*i, flock.rect.y)))
                 #TODO: check if there's a special in there so that you generate a dead one of those
                 pass
         if (flock.rect.left - self.left_bound > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
             for i in range((flock.rect.left - self.right_bound)//bird_width):
-                self.deadbirdsprites.add(MurderedBird(self,(flock.rect.left + bird_width*i, flock.rect.y)))
+                self.murdered.add(MurderedBird(self,(flock.rect.left + bird_width*i, flock.rect.y)))
 
         #TODO: do special effects
-        self.flock.rect.left = max(flock.rect.left, self.left_bound) #resize
-        self.flock.rect.right = min(flock.rect.right, self.right_bound)
 
-
-
+        x = min(flock.rect.right, self.right_bound)
+        y = flock.rect.y
+        length = min(flock.rect.right, self.right_bound) - max(flock.rect.left, self.left_bound) #resize
+        if length<5:
+            return "u suck u lose"
         self.right_bound = flock.rect.right #resets left and right bounds
         self.left_bound = flock.rect.left
 
         #self.towerSprites.add(self.flock)
         flock.kill()
-        self.towerSprites.add(zipBird(  ) )
+        print(x,y)
+        print(length) #LENGTH IS OFF, FIX
+
+        new = ZippedBird(self, length,self.toBiggiePoint((x, y)))
+        self.tower.add(new)
+        print(new.rect.size)
+
+
     """if (some key down):
         place self.flock/moving/whatever you called it
         check to see if the game has ended
@@ -121,14 +130,15 @@ class Game:
         pass
 
     def run(self):
+        length = self.right_bound-self.left_bound
         scrolling = False
         play = True
-        base = ZippedBird(self,(self.screen.get_width()/2,self.screen.get_height()-100))
+        base = ZippedBird(self,length,(self.screen.get_width()/2,self.screen.get_height()-100))
         base.stationary = True
         self.tower.add(base)
         self.allsprites.add(base)
         pos_y = min([each.rect.y for each in self.tower.sprites()]) - 50#self.tower.sprites()[0].bird_size[1]
-        moving = ZippedBird(self,self.toBiggiePoint((30, pos_y)))
+        moving = ZippedBird(self,length,self.toBiggiePoint((200, pos_y)))
         while play:
             stopped = False
             #print(len(self.zipBird.sprites()))
@@ -159,7 +169,12 @@ class Game:
                     stopped = True
 
             if stopped:
-                self.place()
+                if self.place():
+                    self.endGame()
+                else:
+                    self.check_GUI()
+
+
 
 
             if scrolling:

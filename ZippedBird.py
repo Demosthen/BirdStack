@@ -14,10 +14,11 @@ class ZippedBird(pygame.sprite.Sprite):
                     "TREE": "scooter.png"}
 
 
-    def __init__(self, game, startPos = (100,100),length):
+    def __init__(self, game, length,startPos = (250,100)):
         pygame.sprite.Sprite.__init__(self)
+        self.length = length
         self.game = game
-        self.image, self.rect = self.load_spliced_image('scooter.png', startPos)
+        self.image, self.rect = self.edit_image( self.length, False)
         screen = pygame.display.get_surface()
         self.stationary = False
         self.rect.center = self.game.translatePoint(startPos)
@@ -43,7 +44,7 @@ class ZippedBird(pygame.sprite.Sprite):
             each.add(self)
         #use getSpecial() to determine if you're going to have a special bird
         type = self.getSpecial()
-        self.length = game.right_bound - game.left_bound
+        #self.length = game.right_bound - game.left_bound
         if type == "BIRDIE":
             pass
         elif type == "FATSO":
@@ -65,9 +66,10 @@ class ZippedBird(pygame.sprite.Sprite):
             self.fly()
 
     def getSpecial(self):
-        total = sum(prob_dict.values())
+
         on_right = random.random() >= 0.5
         probs = self.right_prob_dict if on_right else self.left_prob_dict
+        total = sum(probs.values())
         special_rand = random.uniform(0, total)
         for item in probs.items():
             if special_rand < item[1]:
@@ -143,5 +145,5 @@ class ZippedBird(pygame.sprite.Sprite):
 
     def edit_image(self, length, on_right, splicing = True): #TODO: splice to add/delete part of the image
         #YOUR CODE HERE
-        return Load.load_image('scooter.png', -1, length)
+        return Load.load_image('scooter.png', -1, (length,self.bird_size[1]))
         pass
