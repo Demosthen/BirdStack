@@ -16,7 +16,6 @@ class ZippedBird(pygame.sprite.Sprite):
         self.game = game
         self.image, self.rect = load_spliced_image('scooter.png', -1, startPos)
         screen = pygame.display.get_surface()
-        self.dropping = False
         self.stationary = False
         self.rect.center = startPos
         self.area = screen.get_rect() # TODO: UPDATE THIS ACCORDING TO GAME SCREEN POSITION
@@ -37,12 +36,9 @@ class ZippedBird(pygame.sprite.Sprite):
         #actually make the thing show up
 
     def update(self):
-        #CHECK COORDINATES
+        #CHECK COORDINATES to see if you need to draw it
         if not self.stationary:
-            if self.dropping:
-                self.drop()
-            else:
-                self.fly()
+            self.fly()
 
     def getSpecial(self):
         total = sum(prob_dict.values())

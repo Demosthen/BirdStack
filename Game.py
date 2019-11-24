@@ -39,11 +39,22 @@ class Game:
         self.towerSprites = pygame.sprite.RenderUpdates()
         self.clock = pygame.time.Clock()
         #TODO: add GUI BUTTONS (PLAY/PAUSE, SCORE, RESTART)
+        #TODO: actually make the zippedbird when you start the game
+        self.flock = ZippedBird(self, (100,100)) #TODO: please change this
+
 
     def place(self):#TODO:
         #YOUR CODE HERE
         #check the position of the zipped bird, compare with the tower left and right bounds, resize+move to tower group, generate extra birds to toss if needed (and specials)
         #check if there are special birds there that do stuff and do their effect
+        if abs(self.right_bound - self.flock.rect.right) <= self.tolerance): #move it over if within certain tolerance
+            self.flock.rect.move(self.right_bound - self.flock.rect.right, 0)
+        elif abs(self.left_bound - self.flock.rect.left) <= self.tolerance):
+            self.flock.rect.move(self.left_bound - self.flock.rect.left, 0)
+        self.flock.stationary = True
+        if (self.right_bound - self.flock.rect.right > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
+            for i in range((self.right_bound - self.flock.rect.right)//bird_width)
+        #TODO: move it to the tower group
         pass
 
     def gameEnded(self):#TODO:
