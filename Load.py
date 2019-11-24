@@ -1,5 +1,6 @@
 import pygame
 import os, sys
+import pygame
 from pygame.locals import *
 
 def load_image(name, colorkey=None, sizes = (50,50)):

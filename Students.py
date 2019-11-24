@@ -16,6 +16,14 @@ class Student():
     def apply_for_internship(self, application, internship):
         return internship.process(application)
 
+    def check_sanity(self):
+        if self.sleep_debt > 12:
+            self.sanity += (10 - self.sleep_debt)//2
+        if self.sanity < -100:
+            self.panic()
+
+    def panic(self):
+        return
 
 class Austin(Student):
 
@@ -31,6 +39,7 @@ class Austin(Student):
 class Jennifer(Student):
 
     def will_study(self, date_time):
+        self.panic()
         return True
 
 
