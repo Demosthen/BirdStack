@@ -19,7 +19,7 @@ class ZippedBird(pygame.sprite.Sprite):
         self.dropping = False
         self.stationary = False
         self.rect.center = startPos
-        self.area = screen.get_rect()
+        self.area = screen.get_rect() # TODO: UPDATE THIS ACCORDING TO GAME SCREEN POSITION
         self.left_prob_dict = {"BIRDIE": 6,
                         "FATSO": 1,
                         "SQUIDDY": 1,
@@ -34,6 +34,7 @@ class ZippedBird(pygame.sprite.Sprite):
         updateRightProb()
 
     def update(self):
+        #CHECK COORDINATES
         if not self.stationary:
             if self.dropping:
                 self.drop()
