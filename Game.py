@@ -43,9 +43,8 @@ class Game:
         self.bigSurface.blit(self.background, self.calcScreenRect()) # TODO: pass area Rect to display only part of it
         self.screen.blit(self.bigSurface, (0,0), area = self.calcScreenRect())
         pygame.display.flip()
-        self.allsprites = pygame.sprite.RenderUpdates()
-        self.towerSprites = pygame.sprite.RenderUpdates()
         self.tolerance = 20# TODO: ADJUST LATER
+        self.allsprites = pygame.sprite.RenderUpdates()
         self.murdered = pygame.sprite.RenderUpdates()
         self.tower = CustomGroup()
         self.zipBird = pygame.sprite.GroupSingle()
@@ -54,7 +53,7 @@ class Game:
         #TODO: initialize with ZippedBird base
         #TODO: add GUI BUTTONS (PLAY/PAUSE, SCORE, RESTART)
         #TODO: actually make the zippedbird when you start the game
-        self.flock = ZippedBird(self, (100,100)) #TODO: please change this
+        #self.flock = ZippedBird(self, (100,100)) #TODO: please change this
 
     def calcScreenRect(self):
         return Rect(0, self.screen_height, self.screen.get_width(), self.screen_height+self.screen.get_height())
@@ -78,24 +77,27 @@ class Game:
 
         if (self.right_bound - self.flock.rect.right > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
             for i in range((self.right_bound - self.flock.rect.right)//bird_width):
-                #TODO: make a murderedbird
-                #ALSO: check if there's a special in there so that you generate a dead one of those
+                self.deadbirdsprites.add(MurderedBird((self.flock.rect.right - bird_width*i), self.flock.rect.y))
+                #TODO: check if there's a special in there so that you generate a dead one of those
                 pass
         if (self.flock.rect.left - self.left_bound > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
             for i in range((self.flock.rect.left - self.right_bound)//bird_width):
-                #TODO: make a murderedbird
+                self.deadbirdsprites.add(MurderedBird((self.flock.rect.left + bird_width*i), self.flock.rect.y))
                 pass
 
         self.right_bound = self.flock.rect.right
         self.left_bound = self.flock.rect.left
         #TODO: move it to the tower group
         #TODO: do specials
-        #TODO: check if gameEnded
-        #TODO: move screen up, then create new flock
+
 
         pass
 
     def check_GUI(self): #pause/play, restart; sprites, will get added into allsprites
+        pass
+
+    def endGame(self):#TODO: do the downward scroll, generate the dead bird pile, etc
+        #YOUR CODE HERE
         pass
 
     def run(self):
