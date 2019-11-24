@@ -62,8 +62,14 @@ class Game:
             for i in range((self.flock.rect.left - self.right_bound)//bird_width):
                 #TODO: make a murderedbird
                 pass
+
+        self.right_bound = self.flock.rect.right
+        self.left_bound = self.flock.rect.left
         #TODO: move it to the tower group
-        #TODO: do sepcials
+        #TODO: do specials
+        #TODO: check if gameEnded
+        #TODO: move screen up, then create new flock
+
         pass
 
     def gameEnded(self):#TODO:
