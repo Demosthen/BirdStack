@@ -78,21 +78,22 @@ class Game:
     def place(self):#TODO:
         #YOUR CODE HERE
         #check if there are special birds there that do stuff and do their effect
+        flock = self.zipBird.sprites()[0]
         bird_width = MurderedBird.bird_size[0]
-        if abs(self.right_bound - self.flock.rect.right) <= self.tolerance: #move it over if within certain tolerance
-            self.flock.rect.move(self.right_bound - self.flock.rect.right, 0)
-        elif abs(self.left_bound - self.flock.rect.left) <= self.tolerance:
-            self.flock.rect.move(self.left_bound - self.flock.rect.left, 0)
-        self.flock.stationary = True
+        if abs(self.right_bound - flock.rect.right) <= self.tolerance: #move it over if within certain tolerance
+            flock.rect.move(right_bound - flock.rect.right, 0)
+        elif abs(self.left_bound - flock.rect.left) <= self.tolerance:
+            flock.rect.move(self.left_bound - flock.rect.left, 0)
+        flock.stationary = True
 
-        if (self.right_bound - self.flock.rect.right > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
-            for i in range((self.right_bound - self.flock.rect.right)//bird_width):
-                MurderedBird(self,(self.flock.rect.right - bird_width*i, self.flock.rect.y))
+        if (self.right_bound - flock.rect.right > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
+            for i in range((self.right_bound - flock.rect.right)//bird_width):
+                self.deadbirdsprites.add(MurderedBird(self,(flock.rect.right - bird_width*i, flock.rect.y)))
                 #TODO: check if there's a special in there so that you generate a dead one of those
                 pass
-        if (self.flock.rect.left - self.left_bound > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
-            for i in range((self.flock.rect.left - self.right_bound)//bird_width):
-                MurderedBird(self,(self.flock.rect.left + bird_width*i, self.flock.rect.y))
+        if (flock.rect.left - self.left_bound > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
+            for i in range((flock.rect.left - self.right_bound)//bird_width):
+                self.deadbirdsprites.add(MurderedBird(self,(flock.rect.left + bird_width*i, flock.rect.y)))
 
         #TODO: do special effects
 
@@ -103,6 +104,12 @@ class Game:
         self.left_bound = self.flock.rect.left
 
         self.towerSprites.add(self.flock)
+
+    """if (some key down):
+        place self.flock/moving/whatever you called it
+        check to see if the game has ended
+            if so, self.endGame()
+        create a newZippedBird"""
 
 
     def check_GUI(self): #pause/play, restart; sprites, will get added into allsprites
@@ -116,13 +123,16 @@ class Game:
         scrolling = False
 
         play = True
-        base = ZippedBird(self,(200,400))
+        base = ZippedBird(self,(self.screen.get_width()/2,self.screen.get_height()-100))
         base.stationary = True
         self.tower.add(base)
         self.allsprites.add(base)
         pos_y = min([each.rect.y for each in self.tower.sprites()]) - 50#self.tower.sprites()[0].bird_size[1]
         moving = ZippedBird(self,self.toBiggiePoint((30, pos_y)))
         while play:
+            stopped = False
+            #print(len(self.zipBird.sprites()))
+            #print(len(self.allsprites.sprites()))
             self.clock.tick(60)
             #else:
                 #place, splice, drop here
@@ -140,11 +150,19 @@ class Game:
                     scrolling = True
                 elif event.type == KEYUP and event.key == K_s:
                     scrolling = False
-                elif event.type == MOUSEBUTTONDOWN:
-                    self.allsprites.add(MurderedBird(self))
-                elif event.type == MOUSEBUTTONUP:
-                    for sprite in self.allsprites.sprites():
-                        sprite.dropping = True
+                #elif event.type == MOUSEBUTTONDOWN:
+                    #self.allsprites.add(MurderedBird(self))
+                #elif event.type == MOUSEBUTTONUP:
+                    #for sprite in self.allsprites.sprites():
+                        #sprite.dropping = True
+                elif event.type == MOUSEBUTTONDOWN and not any([each.collidepoint(cursor_pos) for each in self.gui.sprites()]):
+                    stopped = True
+
+            if stopped:
+                self.place()
+
+
+
             self.allsprites.update()
             #self.bigSurface.blit(self.background, self.calcScreenRect()) # TODO: pass area Rect to display only part of it
             self.allsprites.clear(self.bigSurface,self.background)
