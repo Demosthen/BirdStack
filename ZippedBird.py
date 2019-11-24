@@ -3,6 +3,7 @@ import os, sys
 import pygame
 import Load
 from pygame.locals import *
+import Game
 class ZippedBird(pygame.sprite.Sprite):
     move = 9
     bird_size = (50,50)
@@ -11,6 +12,7 @@ class ZippedBird(pygame.sprite.Sprite):
                     "SQUIDDY": "scooter.png",
                     "INVINCIBLE": "scooter.png",
                     "TREE": "scooter.png"}
+
 
     def __init__(self, game, startPos = (100,100)):
         pygame.sprite.Sprite.__init__(self)
@@ -36,6 +38,9 @@ class ZippedBird(pygame.sprite.Sprite):
                         "TREE": self.apply_tree}
         self.updateLeftProb()
         self.updateRightProb()
+        self.groups = [game.zipBird,game.allsprites]
+        for each in self.groups:
+            each.add(self)
         #use getSpecial() to determine if you're going to have a special bird
         #splice images and do stuff
         #actually make the thing show up

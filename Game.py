@@ -4,9 +4,11 @@ from pygame.locals import *
 from MurderedBird import *
 from Load import *
 from ZippedBird import *
+from CustomGroup import *
+
 class Game:
     def __init__(self, screensize = (468,468)):
-        self.bird_density = "placeholder"#TODO: fill this in
+        self.bird_density = "placeholder"
         self.score = 0
         self.left_bound = 0 #top layer left_bound
         self.right_bound = 0 #top layer right_bound
@@ -20,6 +22,8 @@ class Game:
                         "SQUIDDY": 0,
                         "INVINCIBLE": 0,
                         "TREE": 0}
+        self.gui_sprites = { "PAUSE_PLAY" : "scooter.png",
+                            "RESTART" : "scooter.png" }
         pygame.init()
         self.screen = pygame.display.set_mode(screensize)
         pygame.display.set_caption("BIRD STACK")
@@ -32,20 +36,24 @@ class Game:
             font = pygame.font.Font(None, 36)
             text = font.render("STACK THE BIRDSSSSSSSS", 1, (10, 10, 10))
             textpos = text.get_rect(centerx=self.background.get_width()/2)
+            score = font.render("Score"+ str(self.score), True, (10, 10, 10))
+            scorepos = text.get_rect(topright = (100,100))#this is unfinished
             self.background.blit(text, textpos)
         self.screen_height = 0 #height of bottom of screen
         self.bigSurface.blit(self.background, self.calcScreenRect()) # TODO: pass area Rect to display only part of it
         self.screen.blit(self.bigSurface, (0,0), area = self.calcScreenRect())
         pygame.display.flip()
+        self.tolerance = 20# TODO: ADJUST LATER
         self.allsprites = pygame.sprite.RenderUpdates()
-        self.towerSprites = pygame.sprite.RenderUpdates()
-        self.tolerance = 20 # TODO: ADJUST LATER
-        self.deadbirdsprites = pygame.sprite.RenderUpdates() #TODO: please implement this/make it show up
+        self.murdered = pygame.sprite.RenderUpdates()
+        self.tower = CustomGroup()
+        self.zipBird = pygame.sprite.GroupSingle()
+        self.gui = pygame.sprite.RenderUpdates()
         self.clock = pygame.time.Clock()
         #TODO: initialize with ZippedBird base
         #TODO: add GUI BUTTONS (PLAY/PAUSE, SCORE, RESTART)
         #TODO: actually make the zippedbird when you start the game
-        self.flock = ZippedBird(self, (100,100)) #TODO: please change this
+        #self.flock = ZippedBird(self, (100,100)) #TODO: please change this
 
     def calcScreenRect(self):# calculate the screen's rect within bigSurface
         return Rect(0, self.bigSurface.get_height()- self.screen.get_height() -self.screen_height, self.screen.get_width(), self.bigSurface.get_height() - self.screen_height)
@@ -60,7 +68,6 @@ class Game:
 
     def place(self):#TODO:
         #YOUR CODE HERE
-        #check the position of the zipped bird, compare with the tower left and right bounds, resize+move to tower group, generate extra birds to toss if needed (and specials)
         #check if there are special birds there that do stuff and do their effect
         bird_width = MurderedBird.bird_size[0]
         if abs(self.right_bound - self.flock.rect.right) <= self.tolerance: #move it over if within certain tolerance
@@ -71,22 +78,28 @@ class Game:
 
         if (self.right_bound - self.flock.rect.right > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
             for i in range((self.right_bound - self.flock.rect.right)//bird_width):
-                self.deadbirdsprites.add(MurderedBird((self.flock.rect.right - bird_width*i, self.flock.rect.y)))
+                self.deadbirdsprites.add(MurderedBird(self,(self.flock.rect.right - bird_width*i, self.flock.rect.y)))
                 #TODO: check if there's a special in there so that you generate a dead one of those
+                pass
         if (self.flock.rect.left - self.left_bound > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
             for i in range((self.flock.rect.left - self.right_bound)//bird_width):
-                self.deadbirdsprites.add(MurderedBird((self.flock.rect.left + bird_width*i, self.flock.rect.y)))
+                self.deadbirdsprites.add(MurderedBird(self,(self.flock.rect.left + bird_width*i, self.flock.rect.y)))
 
-        self.right_bound = self.flock.rect.right
+        #TODO: do special effects
+
+        self.flock.rect.left = max(self.flock.rect.left, self.left_bound) #resize
+        self.flock.rect.right = min(self.flock.rect.right, self.right_bound)
+
+        self.right_bound = self.flock.rect.right #resets left and right bounds
         self.left_bound = self.flock.rect.left
-        #TODO: move it to the tower group
-        #TODO: do specials
+
+        self.towerSprites.add(self.flock)
+
 
 
         pass
 
-    def gameEnded(self):#TODO:
-        #YOUR CODE HERE
+    def check_GUI(self): #pause/play, restart; sprites, will get added into allsprites
         pass
 
     def endGame(self):#TODO: do the downward scroll, generate the dead bird pile, etc
@@ -95,8 +108,22 @@ class Game:
 
     def run(self):
         scrolling = False
-        while 1:
+        play = True
+        self.tower.add(ZippedBird(self,(200,200)))
+        while play:
             self.clock.tick(60)
+            move = True
+            pos_y = max([each.rect.y for each in self.tower.sprites()]) + self.tower.sprites()[0].bird_size[1]
+            moving = ZippedBird(self,(0, pos_y))
+            if move:
+                self.zipBird.sprites()[0].fly()
+            #else:
+                #place, splice, drop here
+                #update screen accordingly
+                #check if game has ended
+            self.check_GUI()
+            cursor_pos = pygame.mouse.get_pos()
+            #cursor_rect = Rect(cursor_pos[0]-1,cursor_pos[1]+1,2,2)
             for event in pygame.event.get():
                 if event.type == QUIT:
                     return
@@ -106,12 +133,14 @@ class Game:
                     scrolling = True
                 elif event.type == KEYUP and event.key == K_s:
                     scrolling = False
-                elif event.type == MOUSEBUTTONDOWN:
-                    self.allsprites.add(MurderedBird())
+                #elif event.type == MOUSEBUTTONDOWN:
+                    #self.allsprites.add(MurderedBird())
                 elif event.type == MOUSEBUTTONUP:
                     for sprite in self.allsprites.sprites():
                         sprite.dropping = True
-                    self.place() #TODO: fill in any parameters
+                elif event.type == MOUSEBUTTONDOWN and not any([each.collidepoint(cursor_pos) for each in self.gui.sprites()]):
+                    move = False
+
 
             if scrolling:
                 self.screen_height += 1
