@@ -59,7 +59,7 @@ class Game:
         #YOUR CODE HERE
         #check the position of the zipped bird, compare with the tower left and right bounds, resize+move to tower group, generate extra birds to toss if needed (and specials)
         #check if there are special birds there that do stuff and do their effect
-        bird_width = Bird.bird_size[0]
+        bird_width = MurderedBird.bird_size[0]
         if abs(self.right_bound - self.flock.rect.right) <= self.tolerance: #move it over if within certain tolerance
             self.flock.rect.move(self.right_bound - self.flock.rect.right, 0)
         elif abs(self.left_bound - self.flock.rect.left) <= self.tolerance:
@@ -103,7 +103,7 @@ class Game:
                 elif event.type == KEYUP and event.key == K_s:
                     scrolling = False
                 elif event.type == MOUSEBUTTONDOWN:
-                    self.allsprites.add(Bird())
+                    self.allsprites.add(MurderedBird())
                 elif event.type == MOUSEBUTTONUP:
                     for sprite in self.allsprites.sprites():
                         sprite.dropping = True

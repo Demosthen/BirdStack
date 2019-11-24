@@ -77,8 +77,7 @@ class ZippedBird(pygame.sprite.Sprite):
 
     def load_spliced_image(self, bird, length):#TODO: bird is a string, length is length of image
         #YOUR CODE HERE
-        pass
-
+        return Load.load_image(bird)
 
 
     def apply_effect(self):
