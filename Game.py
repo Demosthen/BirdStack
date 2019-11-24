@@ -52,9 +52,18 @@ class Game:
         elif abs(self.left_bound - self.flock.rect.left) <= self.tolerance):
             self.flock.rect.move(self.left_bound - self.flock.rect.left, 0)
         self.flock.stationary = True
+
         if (self.right_bound - self.flock.rect.right > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
-            for i in range((self.right_bound - self.flock.rect.right)//bird_width)
+            for i in range((self.right_bound - self.flock.rect.right)//bird_width):
+                #TODO: make a murderedbird
+                #ALSO: check if there's a special in there so that you generate a dead one of those
+                pass
+        if (self.flock.rect.left - self.left_bound > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
+            for i in range((self.flock.rect.left - self.right_bound)//bird_width):
+                #TODO: make a murderedbird
+                pass
         #TODO: move it to the tower group
+        #TODO: do sepcials
         pass
 
     def gameEnded(self):#TODO:
