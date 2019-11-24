@@ -15,6 +15,7 @@ class MurderedBird(pygame.sprite.Sprite):
         screen = pygame.display.get_surface()
         self.dropping = False
         self.stationary = False
+        self.game = game
         self.rect.center = self.game.translatePoint(startPos)
         self.area = screen.get_rect()
         for each in self.groups:

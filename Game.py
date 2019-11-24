@@ -29,7 +29,7 @@ class Game:
         pygame.display.set_caption("BIRD STACK")
         self.bigSurface = pygame.Surface((self.screen.get_width(), self.screen.get_height() * 20))
         self.screenPos = ("placeholder", "placeholder")#TODO: fill this in
-        self.background = pygame.Surface(self.screen.get_size())
+        self.background = pygame.Surface(self.bigSurface.get_size())
         self.background = self.background.convert()
         self.background.fill((250,250,250))
         if pygame.font:
@@ -69,6 +69,9 @@ class Game:
     def translatePoint(self,tuple):# translate a point from screen coordinates to bigSurface coordinates
         return (tuple[0], tuple[1] + self.bigSurface.get_height()- self.screen.get_height() -self.screen_height)
 
+    def toBiggiePoint(self, tuple):# translate a rect from bigSurface coordinates to
+        screenRect = self.calcScreenRect()
+        return (tuple[0], tuple[1] - (self.bigSurface.get_height()- self.screen.get_height() -self.screen_height))
 
 
     def place(self):#TODO:
@@ -116,7 +119,7 @@ class Game:
         self.tower.add(base)
         self.allsprites.add(base)
         pos_y = min([each.rect.y for each in self.tower.sprites()]) - 50#self.tower.sprites()[0].bird_size[1]
-        moving = ZippedBird(self,translateRect(30, pos_y))
+        moving = ZippedBird(self,self.toBiggiePoint((30, pos_y)))
         while play:
             self.clock.tick(60)
             #else:
@@ -135,8 +138,8 @@ class Game:
                     scrolling = True
                 elif event.type == KEYUP and event.key == K_s:
                     scrolling = False
-                #elif event.type == MOUSEBUTTONDOWN:
-                    #self.allsprites.add(MurderedBird())
+                elif event.type == MOUSEBUTTONDOWN:
+                    self.allsprites.add(MurderedBird(self))
                 elif event.type == MOUSEBUTTONUP:
                     for sprite in self.allsprites.sprites():
                         sprite.dropping = True
@@ -147,13 +150,17 @@ class Game:
             if scrolling:
                 self.screen_height += 1
             self.allsprites.update()
+            #self.bigSurface.blit(self.background, self.calcScreenRect()) # TODO: pass area Rect to display only part of it
+            self.allsprites.clear(self.bigSurface,self.background)
             dir = self.allsprites.draw(self.bigSurface) #TODO: ONLY DRAW ONES ONSCREEN BY SUBCLASSING GROUP
             # TODO: draw to bigsurface, not screen
             screenRect = self.calcScreenRect()
             onScreen = [d for d in dir if screenRect.contains(d)]
-            self.allsprites.clear(self.bigSurface,self.background)
-            #self.screen.blit(self.bigSurface, (0,0), screenRect)
-            self.screen.blits((self.bigSurface, self.toBiggie(d), d) for d in onScreen)
-            pygame.display.update([self.toBiggie(d) for d in onScreen])#TODO: replace with blit from bigsurface
 
-            #pygame.display.flip()
+
+            self.screen.blit(self.bigSurface, (0,0), screenRect)
+
+            #self.screen.blits((self.bigSurface, self.toBiggie(d), d) for d in onScreen)
+            #pygame.display.update([self.toBiggie(d) for d in onScreen])#TODO: replace with blit from bigsurface
+
+            pygame.display.flip()
