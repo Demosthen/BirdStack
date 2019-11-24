@@ -146,7 +146,7 @@ class ZippedBird(pygame.sprite.Sprite):
     def edit_image(self, length, on_right, splicing = True): #TODO: splice to add/delete part of the image
         #YOUR CODE HERE
         return self.splice_image([Load.load_image('scooter.png', -1, (length//3,self.bird_size[1]))[0],Load.load_image('scooter.png', -1, (length//3,self.bird_size[1]))[0], Load.load_image('scooter.png', -1, (length//3,self.bird_size[1]))[0]])
-        pass
+        
 
     def splice_image(self, imgs):
         total_width = sum([i.get_width() for i in imgs])

@@ -50,6 +50,7 @@ class Game:
         self.gui = pygame.sprite.RenderUpdates()
         self.clock = pygame.time.Clock()
         self.scroll = 5 # amount it scrolls each frame
+        self.squiddy_clock = pygame.time.Clock()
         #TODO: initialize with ZippedBird base
         #TODO: add GUI BUTTONS (PLAY/PAUSE, SCORE, RESTART)
         #TODO: actually make the zippedbird when you start the game
