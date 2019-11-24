@@ -77,11 +77,11 @@ class Game:
 
         if (self.right_bound - self.flock.rect.right > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
             for i in range((self.right_bound - self.flock.rect.right)//bird_width):
-                self.deadbirdsprites.add(MurderedBird((self.flock.rect.right - bird_width*i, self.flock.rect.y)))
+                self.deadbirdsprites.add(MurderedBird(self,(self.flock.rect.right - bird_width*i, self.flock.rect.y)))
                 #TODO: check if there's a special in there so that you generate a dead one of those
         if (self.flock.rect.left - self.left_bound > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
             for i in range((self.flock.rect.left - self.right_bound)//bird_width):
-                self.deadbirdsprites.add(MurderedBird((self.flock.rect.left + bird_width*i, self.flock.rect.y)))
+                self.deadbirdsprites.add(MurderedBird(self,(self.flock.rect.left + bird_width*i, self.flock.rect.y)))
 
         self.right_bound = self.flock.rect.right
         self.left_bound = self.flock.rect.left
@@ -105,16 +105,16 @@ class Game:
         while play:
             self.clock.tick(60)
             move = True
-            pos_y = max([each.rect.y for each in self.tower.sprites()]) + self.tower[0].bird_size[1]
-            self.zipBird.add(ZippedBird(self,(0, pos_y)))
+            pos_y = max([each.rect.y for each in self.tower.sprites()]) + self.tower.sprites()[0].bird_size[1]
+            moving = ZippedBird(self,(0, pos_y))
             if move:
-                self.zipBird[0].fly()
+                self.zipBird.sprites()[0].fly()
             #else:
                 #place, splice, drop here
                 #update screen accordingly
                 #check if game has ended
             self.check_GUI()
-            cursor_pos = mouse.get_pos()
+            cursor_pos = pygame.mouse.get_pos()
             #cursor_rect = Rect(cursor_pos[0]-1,cursor_pos[1]+1,2,2)
             for event in pygame.event.get():
                 if event.type == QUIT:

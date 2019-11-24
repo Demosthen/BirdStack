@@ -1,18 +1,24 @@
 import pygame
 from Load import *
+import Game
 
 GRAVITY = 9
 class MurderedBird(pygame.sprite.Sprite):
     move = 9
     bird_size = (50,50)
-    def __init__(self, startPos = (100,100)):
+
+    def __init__(self, game, startPos = (100,100)):
+
         pygame.sprite.Sprite.__init__(self)
+        self.groups = [game.allsprites,game.murdered]
         self.image, self.rect = load_image('scooter.png', -1, startPos)
         screen = pygame.display.get_surface()
         self.dropping = False
         self.stationary = False
         self.rect.center = startPos
         self.area = screen.get_rect()
+        for each in self.groups:
+            each.add(self)
 
     def update(self):
         if not self.stationary:
