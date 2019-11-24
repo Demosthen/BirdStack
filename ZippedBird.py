@@ -49,6 +49,7 @@ class ZippedBird(pygame.sprite.Sprite):
         screen = pygame.display.get_surface()
         self.stationary = False
         self.rect.center = self.game.translatePoint(startPos)
+        self.ink_turn = 3
         self.margin = 25
         self.area = screen.get_rect() # TODO: UPDATE THIS ACCORDING TO GAME SCREEN POSITION
         #self.length = game.right_bound - game.left_bound
@@ -163,9 +164,12 @@ class ZippedBird(pygame.sprite.Sprite):
             self.rect.left = self.special_marker + length_eaten
         self.splice_image(length_eaten, on_right, True)
 
-    def apply_squiddy(self): #TODO: Black screen for some time
-        #YOUR CODE HERE
-        pass
+    def apply_squiddy(self):
+        #Game.squiddy_clock = pygame.time.Clock()
+        #Game.squiddy_clock.tick()
+
+        SquidInk(self.game, self.ink_turn)
+
 
     def apply_invincible(self): #TODO: make a long block
         #YOUR CODE HERE

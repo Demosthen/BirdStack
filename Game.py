@@ -50,7 +50,8 @@ class Game:
         self.gui = pygame.sprite.RenderUpdates()
         self.clock = pygame.time.Clock()
         self.scroll = 5 # amount it scrolls each frame
-        self.squiddy_clock = pygame.time.Clock()
+        #self.squiddy_time = 1500
+        self.turns = 0
         #TODO: initialize with ZippedBird base
         #TODO: add GUI BUTTONS (PLAY/PAUSE, SCORE, RESTART)
         #TODO: actually make the zippedbird when you start the game
@@ -131,7 +132,7 @@ class Game:
 
         moving = ZippedBird(self,length,self.fromBiggiePoint((200, y-50)))
         print(len(self.tower.sprites()),len(self.murdered.sprites()), len(self.allsprites.sprites()) )
-
+        self.turns += 1
 
 
     """if (some key down):
