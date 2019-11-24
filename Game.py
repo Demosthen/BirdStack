@@ -107,14 +107,14 @@ class Game:
     def run(self):
         scrolling = False
         play = True
-        self.tower.add(ZippedBird(self,(200,200)))
+        base = ZippedBird(self,(200,400))
+        base.stationary = True
+        self.tower.add(base)
+        self.allsprites.add(base)
+        pos_y = min([each.rect.y for each in self.tower.sprites()]) - 50#self.tower.sprites()[0].bird_size[1]
+        moving = ZippedBird(self,translateRect(30, pos_y))
         while play:
             self.clock.tick(60)
-            move = True
-            pos_y = max([each.rect.y for each in self.tower.sprites()]) + self.tower.sprites()[0].bird_size[1]
-            moving = ZippedBird(self,(0, pos_y))
-            if move:
-                self.zipBird.sprites()[0].fly()
             #else:
                 #place, splice, drop here
                 #update screen accordingly
