@@ -30,6 +30,10 @@ class ZippedBird(pygame.sprite.Sprite):
                         "SQUIDDY": 1,
                         "INVINCIBLE": 1,
                         "TREE": 1}
+        effect_dict = { "FATSO": self.apply_fatso,
+                        "SQUIDDY": self.apply_squiddy,
+                        "INVINCIBLE": self.apply_invincible,
+                        "TREE": self.apply_tree}
         updateLeftProb()
         updateRightProb()
 
@@ -46,12 +50,12 @@ class ZippedBird(pygame.sprite.Sprite):
         on_right = random.random() >= 0.5
         probs = self.right_prob_dict if on_right else self.left_prob_dict
         special_rand = random.uniform(0, total)
-        for bird, prob in probs.values():
-            if special_rand < prob:
+        for item in probs.items():
+            if special_rand < item[1]:
                 break
             else:
-                special_rand -= prob
-        return bird
+                special_rand -= item[1]
+        return item[0], on_right #returns string of bird type and boolean whether it's on the right side
 
     def updateLeftProb(self):
         #YOUR CODE HERE
@@ -71,6 +75,43 @@ class ZippedBird(pygame.sprite.Sprite):
                 newpos = self.rect.move((self.move, 0))
         self.rect = newpos
 
-    def load_spliced_image(self, bird, length):# bird is a string, length is length of image
+    def load_spliced_image(self, bird, length):#TODO: bird is a string, length is length of image
+        #YOUR CODE HERE
+        pass
+
+
+
+    def apply_effect(self):
+        self.bird_type, on_right = self.getSpecial
+        self.special_marker = self.rect.right - self.bird_size[0] if self.on_right else self.rect.left + self.bird_size[0] #position of the end of special bird block
+        self.effect_dict[self.bird_type](on_right)
+
+    def apply_fatso(self, on_right):
+        if on_right:
+            length_eaten = Game.right_bound - self.special_marker # TODO: margin
+            self.rect.right = self.special_marker - length_eaten
+        else:
+            length_eaten = self.special_marker - Game.left_bound # TODO: margin
+            self.rect.left = self.special_marker + length_eaten
+        self.splice_image(length_eaten, on_right, True)
+
+    def apply_squiddy(self): #TODO: Black screen for some time
+        #YOUR CODE HERE
+        pass
+
+    def apply_invincible(self): #TODO: make a long block
+        #YOUR CODE HERE
+        pass
+
+    def apply_tree(self):
+        if self.on_right:
+            length_built = Game.right_bound - self.rect.right
+            self.rect.right += length_built
+        else:
+            length_built = self.rect.left - Game.left_bound
+            self.rect.left -= length_built
+        self.splice_image(length_built, on_right, False)
+
+    def edit_image(self, length, on_right, splicing = True): #TODO: splice to add/delete part of the image
         #YOUR CODE HERE
         pass
