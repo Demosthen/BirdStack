@@ -42,6 +42,8 @@ class Game:
 
     def place(self):#TODO:
         #YOUR CODE HERE
+        #check the position of the zipped bird, compare with the tower left and right bounds, resize+move to tower group, generate extra birds to toss if needed (and specials)
+        #check if there are special birds there that do stuff and do their effect
         pass
 
     def gameEnded(self):#TODO:
