@@ -99,6 +99,23 @@ class Game:
         x = (min(right, self.right_bound) + max(left, self.left_bound))/2
         #x = flock.rect.centerx
         y = flock.rect.centery
+
+
+        #FIX MUDRDERED BIRDS
+        if (right - self.right_bound > 0.2*bird_width): #change to whatever fraction of the thing counts as a bird
+            for i in range(round((right - self.right_bound)/bird_width)):
+                print(i)
+                self.murdered.add(MurderedBird(self,self.fromBiggiePoint((right+20*(i+1), flock.rect.y))))
+                #pygame.time.wait(100)
+
+                #TODO: check if there's a special in there so that you generate a dead one of those
+
+        if (self.left_bound - left > 0.2*bird_width): #change to whatever fraction of the thing counts as a bird
+            for i in range(round((self.left_bound - left)//bird_width)):
+                print(i)
+                self.murdered.add(MurderedBird(self,self.fromBiggiePoint((left-+20*(i+1), flock.rect.y))))
+                #pygame.time.wait(100)
+
         length = min(right, self.right_bound) - max(left, self.left_bound) #resize
 
         #FIX MUDRDERED BIRDS
@@ -123,6 +140,7 @@ class Game:
         self.right_bound = min(right, self.right_bound) #resets left and right bounds
         self.left_bound = max(left, self.left_bound)
         if length < 5 or self.is_negative_length:
+            flock.kill()
             return "u suck u lose"
         #self.towerSprites.add(self.flock)
         #flock.kill()
