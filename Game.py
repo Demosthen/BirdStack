@@ -118,6 +118,8 @@ class Game:
         pos_y = min([each.rect.y for each in self.tower.sprites()]) - 50#self.tower.sprites()[0].bird_size[1] FIX THIS
         moving = ZippedBird(self,(30, pos_y))
         while play:
+            #print(len(self.zipBird.sprites()))
+            #print(len(self.allsprites.sprites()))
             self.clock.tick(60)
             #else:
                 #place, splice, drop here
