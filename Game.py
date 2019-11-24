@@ -36,8 +36,8 @@ class Game:
             font = pygame.font.Font(None, 36)
             text = font.render("STACK THE BIRDSSSSSSSS", 1, (10, 10, 10))
             textpos = text.get_rect(centerx=self.background.get_width()/2)
-            score = font.render("Score"+ self.score, True, (10, 10, 10))
-            scorepos = text.get_rect(top_right = (self.screensize[],))#this is unfinished
+            score = font.render("Score"+ str(self.score), True, (10, 10, 10))
+            scorepos = text.get_rect(topright = (100,100))#this is unfinished
             self.background.blit(text, textpos)
         self.screen_height = 0 #height of bottom of screen
         self.bigSurface.blit(self.background, self.calcScreenRect()) # TODO: pass area Rect to display only part of it
@@ -65,9 +65,9 @@ class Game:
         #YOUR CODE HERE
         #check the position of the zipped bird, compare with the tower left and right bounds, resize+move to tower group, generate extra birds to toss if needed (and specials)
         #check if there are special birds there that do stuff and do their effect
-        if abs(self.right_bound - self.flock.rect.right) <= self.tolerance): #move it over if within certain tolerance
+        if abs(self.right_bound - self.flock.rect.right) <= self.tolerance: #move it over if within certain tolerance
             self.flock.rect.move(self.right_bound - self.flock.rect.right, 0)
-        elif abs(self.left_bound - self.flock.rect.left) <= self.tolerance):
+        elif abs(self.left_bound - self.flock.rect.left) <= self.tolerance:
             self.flock.rect.move(self.left_bound - self.flock.rect.left, 0)
         self.flock.stationary = True
 
@@ -94,8 +94,21 @@ class Game:
         pass
 
     def run(self):
+        scrolling = False
         while play:
             self.clock.tick(60)
+            move = True
+            pos_y = max([each.rect.y for each in self.tower.sprites()]) + self.tower[0].bird_size[1]
+            self.zipBird.add(ZippedBird(self,(0, pos_y)))
+            if move:
+                self.zipBird[0].fly()
+            #else:
+                #place, splice, drop here
+                #update screen accordingly
+                #check if game has ended
+            self.check_GUI()
+            cursor_pos = mouse.get_pos()
+            #cursor_rect = Rect(cursor_pos[0]-1,cursor_pos[1]+1,2,2)
             for event in pygame.event.get():
                 if event.type == QUIT:
                     return
@@ -105,31 +118,14 @@ class Game:
                     scrolling = True
                 elif event.type == KEYUP and event.key == K_s:
                     scrolling = False
-                elif event.type == MOUSEBUTTONDOWN:
-                    self.allsprites.add(Bird())
+                #elif event.type == MOUSEBUTTONDOWN:
+                    #self.allsprites.add(Bird())
                 elif event.type == MOUSEBUTTONUP:
                     for sprite in self.allsprites.sprites():
                         sprite.dropping = True
-
-            move = True
-            pos_y = max[each.rect.y for each in self.tower] + self.tower[0].bird_size[1]
-            self.zipBird.add(ZippedBird(self,(0, pos_y)))
-            while move:
-                self.zipBird[0].fly()
-                self.check_GUI()
-                cursor_pos = mouse.get_pos()
-                #cursor_rect = Rect(cursor_pos[0]-1,cursor_pos[1]+1,2,2)
-                if event.type = MOUSEBUTTONDOWN and (not any[each.collidepoint(cursor_pos) for each in self.gui]):
+                elif event.type == MOUSEBUTTONDOWN and not any([each.collidepoint(cursor_pos) for each in self.gui.sprites()]):
                     move = False
-            #place, splice, drop here
-            #update screen accordingly
-            #check if game has ended
 
-        scrolling = False
-
-
-
-                    self.place() #TODO: fill in any parameters
 
             if scrolling:
                 self.screen_height += 1
