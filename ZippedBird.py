@@ -12,7 +12,7 @@ class ZippedBird(pygame.sprite.Sprite):
                     "SQUIDDY": "scooter.png",
                     "INVINCIBLE": "invincible.jpg",
                     "TREE": "tree.png"}
-    need_append = {"BIRDIE": 0,# 1 if need to increase length, 0 if don't need to increase length
+    need_append = {"BIRDIE": -1,# 1 if need to increase length, 0 if don't need to increase length
                     "FATSO": 1,
                     "SQUIDDY": 1,
                     "INVINCIBLE": 0,
@@ -50,6 +50,7 @@ class ZippedBird(pygame.sprite.Sprite):
         self.stationary = False
         self.rect.center = self.game.translatePoint(startPos)
         self.ink_turn = 3
+        self.margin = 25
         self.area = screen.get_rect() # TODO: UPDATE THIS ACCORDING TO GAME SCREEN POSITION
         #self.length = game.right_bound - game.left_bound
         if self.bird_type == "BIRDIE":
@@ -71,9 +72,27 @@ class ZippedBird(pygame.sprite.Sprite):
         #CHECK COORDINATES to see if you need to draw it
         if not self.stationary:
             self.fly()
+    def place(self, left_bound, right_bound):
+        if self.bird_type != "BIRDIE":
+            if self.on_right:
+                special_right = self.rect.right
+                special_left = self.rect.right - self.bird_size[0]
+            else:
+                special_right = self.rect.left + self.bird_size[0]
+                special_left = self.rect.left
+            if left_bound >= special_left or right_bound <= special_right:
+                self.bird_type = "BIRDIE"
+        self.resize(right_bound - left_bound)
+
+
+
+    def resize(self, newLength):
+        self.image, self.rect = self.edit_image(newLength)
+
+    def relocate(self, newLoc):
+        self.rect.center = self.game.translatePoint(newLoc)
 
     def getSpecial(self):
-
         on_right = random.random() >= 0.5
         probs = self.right_prob_dict if on_right else self.left_prob_dict
         total = sum(probs.values())
@@ -98,10 +117,18 @@ class ZippedBird(pygame.sprite.Sprite):
 
     def updateLeftProb(self):
         #YOUR CODE HERE
+        if self.game.right_bound - self.game.left_bound < self.bird_size[0]:
+            for key, val in self.need_append.items():
+                if val == 0:
+                    self.left_prob_dict[key] = 0
         pass
 
     def updateRightProb(self):
         #YOUR CODE HERE
+        if self.game.right_bound - self.game.left_bound < self.bird_size[0]:
+            for key, val in self.need_append.items():
+                if val == 0:
+                    self.right_prob_dict[key] = 0
         pass
 
     def fly(self):
@@ -153,11 +180,14 @@ class ZippedBird(pygame.sprite.Sprite):
             self.rect.left -= length_built
         self.splice_image(length_built, on_right, False)
 
-    def edit_image(self, length, on_right, splicing = True): #TODO: splice to add/delete part of the image
+    def edit_image(self, length, splicing = True):
         #YOUR CODE HERE
         imgs = [0,0]
-        imgs[on_right] = Load.load_image(self.image_dict[self.bird_type], -1,self.bird_size)[0]
-        imgs[not on_right] = Load.load_image('scooter.png', -1, (length - self.bird_size[0],self.bird_size[1]))[0]
+        if self.bird_type == "BIRDIE":
+            img = Load.load_image('scooter.png', -1, (length,self.bird_size[1]))[0]
+            return img, img.get_rect()
+        imgs[self.on_right] = Load.load_image(self.image_dict[self.bird_type], -1,self.bird_size)[0]
+        imgs[not self.on_right] = Load.load_image('scooter.png', -1, (length - self.bird_size[0] * (not self.need_append[self.bird_type]),self.bird_size[1]))[0]
         return self.splice_image(imgs)
 
     def splice_image(self, imgs):#concatenates a list of images into one surface
