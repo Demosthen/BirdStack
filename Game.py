@@ -95,15 +95,17 @@ class Game:
                 self.deadbirdsprites.add(MurderedBird(self,(flock.rect.left + bird_width*i, flock.rect.y)))
 
         #TODO: do special effects
+        self.flock.rect.left = max(flock.rect.left, self.left_bound) #resize
+        self.flock.rect.right = min(flock.rect.right, self.right_bound)
+        
 
-        self.flock.rect.left = max(self.flock.rect.left, self.left_bound) #resize
-        self.flock.rect.right = min(self.flock.rect.right, self.right_bound)
 
-        self.right_bound = self.flock.rect.right #resets left and right bounds
-        self.left_bound = self.flock.rect.left
+        self.right_bound = flock.rect.right #resets left and right bounds
+        self.left_bound = flock.rect.left
 
-        self.towerSprites.add(self.flock)
-
+        #self.towerSprites.add(self.flock)
+        flock.kill()
+        self.towerSprites.add(zipBird(  ) )
 
     def check_GUI(self): #pause/play, restart; sprites, will get added into allsprites
         pass
@@ -114,7 +116,6 @@ class Game:
 
     def run(self):
         scrolling = False
-        scroll = 1 # amount it scrolls each frame
         play = True
         base = ZippedBird(self,(self.screen.get_width()/2,self.screen.get_height()-100))
         base.stationary = True
@@ -155,7 +156,8 @@ class Game:
                 self.place()
 
 
-
+            if scrolling:
+                self.screen_height += 1
             self.allsprites.update()
             #self.bigSurface.blit(self.background, self.calcScreenRect()) # TODO: pass area Rect to display only part of it
             self.allsprites.clear(self.bigSurface,self.background)
@@ -163,8 +165,11 @@ class Game:
             # TODO: draw to bigsurface, not screen
             screenRect = self.calcScreenRect()
             onScreen = [d for d in dir if screenRect.contains(d)]
-            if scrolling:
-                self.screen_height += scroll
-                onScreen = [d.inflate(0, scroll*2) for d in onScreen]
+
+
+            #self.screen.blit(self.bigSurface, (0,0), screenRect)
+
             self.screen.blits((self.bigSurface, self.toBiggie(d), d) for d in onScreen)
-            pygame.display.update([self.toBiggie(d) for d in onScreen])
+            pygame.display.update([self.toBiggie(d) for d in onScreen])#TODO: replace with blit from bigsurface
+
+            #pygame.display.flip()

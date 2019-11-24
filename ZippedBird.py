@@ -14,7 +14,7 @@ class ZippedBird(pygame.sprite.Sprite):
                     "TREE": "scooter.png"}
 
 
-    def __init__(self, game, startPos = (100,100)):
+    def __init__(self, game, startPos = (100,100),length):
         pygame.sprite.Sprite.__init__(self)
         self.game = game
         self.image, self.rect = self.load_spliced_image('scooter.png', startPos)
