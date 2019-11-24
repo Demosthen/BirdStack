@@ -8,11 +8,24 @@ class Student():
     def will_study(self, date_time):
         return date_time - self.next_midterm() < 4.0
 
+    def do_work(self, work):
+        self.sleep_debt += work.time_required
+        if work.time_required > 5:
+            self.sanity -= work.time_required - 5
+
+    def apply_for_internship(self, application, internship):
+        return internship.process(application)
+
+
 class Austin(Student):
 
     def enroll(self, course):
         if course.type == 'humanity':
             return 'Error: Schedule Conflict\tUnable to enroll in ' + course.name
+
+    def apply_for_internship(self, application, internship):
+        self.internship = internship
+        return internship.accepted
 
 
 class Jennifer(Student):
