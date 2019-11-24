@@ -76,12 +76,12 @@ class Game:
 
         if (self.right_bound - self.flock.rect.right > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
             for i in range((self.right_bound - self.flock.rect.right)//bird_width):
-                MurderedBird(self,(self.flock.rect.right - bird_width*i, self.flock.rect.y))
+                self.deadbirdsprites.add(MurderedBird(self,(self.flock.rect.right - bird_width*i, self.flock.rect.y)))
                 #TODO: check if there's a special in there so that you generate a dead one of those
                 pass
         if (self.flock.rect.left - self.left_bound > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
             for i in range((self.flock.rect.left - self.right_bound)//bird_width):
-                MurderedBird(self,(self.flock.rect.left + bird_width*i, self.flock.rect.y))
+                self.deadbirdsprites.add(MurderedBird(self,(self.flock.rect.left + bird_width*i, self.flock.rect.y)))
 
         #TODO: do special effects
 
@@ -107,12 +107,12 @@ class Game:
     def run(self):
         scrolling = False
         play = True
-        base = ZippedBird(self,(200,400))
+        base = ZippedBird(self,(250,400))
         base.stationary = True
         self.tower.add(base)
         self.allsprites.add(base)
-        pos_y = min([each.rect.y for each in self.tower.sprites()]) - 50#self.tower.sprites()[0].bird_size[1]
-        moving = ZippedBird(self,translateRect(30, pos_y))
+        pos_y = min([each.rect.y for each in self.tower.sprites()]) - 50#self.tower.sprites()[0].bird_size[1] FIX THIS
+        moving = ZippedBird(self,(30, pos_y))
         while play:
             self.clock.tick(60)
             #else:
