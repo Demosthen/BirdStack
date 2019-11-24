@@ -50,7 +50,6 @@ class Game:
         self.gui = pygame.sprite.RenderUpdates()
         self.clock = pygame.time.Clock()
         self.scroll = 5 # amount it scrolls each frame
-        self.squiddy_clock = pygame.time.Clock()
         #TODO: initialize with ZippedBird base
         #TODO: add GUI BUTTONS (PLAY/PAUSE, SCORE, RESTART)
         #TODO: actually make the zippedbird when you start the game
@@ -96,19 +95,27 @@ class Game:
         x = (min(right, self.right_bound) + max(left, self.left_bound))/2
         #x = flock.rect.centerx
         y = flock.rect.centery
+
+
+        #FIX MUDRDERED BIRDS
+        if (right - self.right_bound > 0.2*bird_width): #change to whatever fraction of the thing counts as a bird
+            for i in range(round((right - self.right_bound)/bird_width)):
+                print(i)
+                self.murdered.add(MurderedBird(self,self.fromBiggiePoint((right+20*(i+1), flock.rect.y))))
+                #pygame.time.wait(100)
+
+                #TODO: check if there's a special in there so that you generate a dead one of those
+
+        if (self.left_bound - left > 0.2*bird_width): #change to whatever fraction of the thing counts as a bird
+            for i in range(round((self.left_bound - left)//bird_width)):
+                print(i)
+                self.murdered.add(MurderedBird(self,self.fromBiggiePoint((left-+20*(i+1), flock.rect.y))))
+                #pygame.time.wait(100)
+
         length = min(right, self.right_bound) - max(left, self.left_bound) #resize
         if length<5:
+            flock.kill()
             return "u suck u lose"
-        #FIX MUDRDERED BIRDS
-        # if (self.right_bound - flock.rect.right > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
-        #     for i in range((self.right_bound - flock.rect.right)//bird_width):
-        #         self.murdered.add(MurderedBird(self,(flock.rect.right - bird_width*i, flock.rect.y)))
-        #         #TODO: check if there's a special in there so that you generate a dead one of those
-        #
-        # if (flock.rect.left - self.left_bound > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
-        #     for i in range((flock.rect.left - self.right_bound)//bird_width):
-        #         self.murdered.add(MurderedBird(self,(flock.rect.left + bird_width*i, flock.rect.y)))
-
         #TODO: do special effects
 
 
