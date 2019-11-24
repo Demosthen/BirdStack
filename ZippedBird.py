@@ -5,7 +5,7 @@ import Load
 from pygame.locals import *
 import Game
 class ZippedBird(pygame.sprite.Sprite):
-    move = 9
+    move = 3
     bird_size = (50,50)
     image_dict = {"BIRDIE": "scooter.png",
                     "FATSO": "scooter.png",
