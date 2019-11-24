@@ -1,7 +1,7 @@
 import os, sys
 import pygame
 from pygame.locals import *
-from Bird import *
+from MurderedBird import *
 from Load import *
 from ZippedBird import *
 from CustomGroup import *
@@ -10,8 +10,8 @@ class Game:
     def __init__(self, screensize = (468,468)):
         self.bird_density = "placeholder"
         self.score = 0
-        self.left_bound = 0 #bound of top layer of tower
-        self.right_bound = 0 #bound of top layer of tower
+        self.left_bound = 0 #top layer left_bound
+        self.right_bound = 0 #top layer right_bound
         self.murders = {"BIRDIE": 0,
                         "FATSO": 0,
                         "SQUIDDY": 0,
