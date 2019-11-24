@@ -50,6 +50,7 @@ class Game:
         self.zipBird = pygame.sprite.GroupSingle()
         self.gui = pygame.sprite.RenderUpdates()
         self.clock = pygame.time.Clock()
+        self.scroll = 5 # amount it scrolls each frame
         #TODO: initialize with ZippedBird base
         #TODO: add GUI BUTTONS (PLAY/PAUSE, SCORE, RESTART)
         #TODO: actually make the zippedbird when you start the game
@@ -113,7 +114,7 @@ class Game:
 
     def run(self):
         scrolling = False
-        scroll = 1 # amount it scrolls each frame
+
         play = True
         base = ZippedBird(self,(200,400))
         base.stationary = True
@@ -144,20 +145,15 @@ class Game:
                 elif event.type == MOUSEBUTTONUP:
                     for sprite in self.allsprites.sprites():
                         sprite.dropping = True
-                elif event.type == MOUSEBUTTONDOWN and not any([each.collidepoint(cursor_pos) for each in self.gui.sprites()]):
-                    move = False
-
-
-
             self.allsprites.update()
             #self.bigSurface.blit(self.background, self.calcScreenRect()) # TODO: pass area Rect to display only part of it
             self.allsprites.clear(self.bigSurface,self.background)
             dir = self.allsprites.draw(self.bigSurface) #TODO: ONLY DRAW ONES ONSCREEN BY SUBCLASSING GROUP
             # TODO: draw to bigsurface, not screen
             screenRect = self.calcScreenRect()
-            onScreen = [d for d in dir if screenRect.contains(d)]
+            onScreen = [d for d in dir if screenRect.contains(d)]# only blit the ones on screen
             if scrolling:
-                self.screen_height += scroll
-                onScreen = [d.inflate(0, scroll*2) for d in onScreen]
-            self.screen.blits((self.bigSurface, self.toBiggie(d), d) for d in onScreen)
+                self.screen_height += self.scroll# move up screen
+                onScreen = [Rect(d.left, d.top - abs(self.scroll), d.right, d.bottom + abs(self.scroll)) for d in onScreen] # correct dirty rectangles
+            self.screen.blits([(self.bigSurface, self.toBiggie(d), d) for d in onScreen])
             pygame.display.update([self.toBiggie(d) for d in onScreen])

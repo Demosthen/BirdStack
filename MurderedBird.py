@@ -44,6 +44,7 @@ class MurderedBird(pygame.sprite.Sprite):
         """make the bird fall"""
         newpos = self.rect.move((0, GRAVITY))
         self.rect = newpos
-        if self.rect.top >= self.area.height:
+        area = self.game.calcScreenRect()
+        if self.rect.top >= area.height:
             print("DEAD!")
             self.kill()
