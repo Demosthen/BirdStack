@@ -58,7 +58,6 @@ class Game:
 
     def place(self):#TODO:
         #YOUR CODE HERE
-        #check the position of the zipped bird, compare with the tower left and right bounds, resize+move to tower group, generate extra birds to toss if needed (and specials)
         #check if there are special birds there that do stuff and do their effect
         bird_width = MurderedBird.bird_size[0]
         if abs(self.right_bound - self.flock.rect.right) <= self.tolerance: #move it over if within certain tolerance
@@ -71,14 +70,22 @@ class Game:
             for i in range((self.right_bound - self.flock.rect.right)//bird_width):
                 self.deadbirdsprites.add(MurderedBird((self.flock.rect.right - bird_width*i, self.flock.rect.y)))
                 #TODO: check if there's a special in there so that you generate a dead one of those
+                pass
         if (self.flock.rect.left - self.left_bound > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
             for i in range((self.flock.rect.left - self.right_bound)//bird_width):
                 self.deadbirdsprites.add(MurderedBird((self.flock.rect.left + bird_width*i, self.flock.rect.y)))
+                pass
 
-        self.right_bound = self.flock.rect.right
+        #TODO: do special effects
+
+        self.flock.rect.left = max(self.flock.rect.left, self.left_bound) #resize
+        self.flock.rect.right = min(self.flock.rect.right, self.right_bound)
+
+        self.right_bound = self.flock.rect.right #resets left and right bounds
         self.left_bound = self.flock.rect.left
-        #TODO: move it to the tower group
-        #TODO: do specials
+
+        self.towerSprites.add(self.flock)
+
 
 
         pass
