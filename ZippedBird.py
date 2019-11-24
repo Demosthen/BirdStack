@@ -4,6 +4,8 @@ import pygame
 import Load
 from pygame.locals import *
 import Game
+from SquidInk import *
+
 class ZippedBird(pygame.sprite.Sprite):
     move = 3
     bird_size = (50,50)
@@ -24,16 +26,16 @@ class ZippedBird(pygame.sprite.Sprite):
         self.length = length
         self.game = game
 
-        self.left_prob_dict = {"BIRDIE": 6,
-                        "FATSO": 1,
+        self.left_prob_dict = {"BIRDIE": 1,
+                        "FATSO": 0,
                         "SQUIDDY": 1,
-                        "INVINCIBLE": 1,
-                        "TREE": 1}
-        self.right_prob_dict = {"BIRDIE": 6,
-                        "FATSO": 1,
+                        "INVINCIBLE": 0,
+                        "TREE": 0}
+        self.right_prob_dict = {"BIRDIE": 1,
+                        "FATSO": 0,
                         "SQUIDDY": 1,
-                        "INVINCIBLE": 1,
-                        "TREE": 1}
+                        "INVINCIBLE": 0,
+                        "TREE": 0}
         self.effect_dict = { "FATSO": self.apply_fatso,
                         "SQUIDDY": self.apply_squiddy,
                         "INVINCIBLE": self.apply_invincible,
@@ -52,19 +54,6 @@ class ZippedBird(pygame.sprite.Sprite):
         self.ink_turn = 3
         self.margin = 25
         self.area = screen.get_rect() # TODO: UPDATE THIS ACCORDING TO GAME SCREEN POSITION
-        #self.length = game.right_bound - game.left_bound
-        if self.bird_type == "BIRDIE":
-            pass
-        elif self.bird_type == "FATSO":
-            pass
-        elif self.bird_type == "SQUIDDY":
-            pass
-        elif self.bird_type == "INVINCIBLE":
-            pass
-        elif self.bird_type == "TREE":
-            pass
-
-
         #splice images and do stuff
         #actually make the thing show up
 
@@ -74,7 +63,7 @@ class ZippedBird(pygame.sprite.Sprite):
             self.fly()
 
     def place(self, left_bound, right_bound, length):
-        if self.bird_type != "BIRDIE":
+        if self.bird_type != 'BIRDIE':
             if self.on_right:
                 special_right = self.rect.right
                 special_left = self.rect.right - self.bird_size[0]
@@ -86,7 +75,7 @@ class ZippedBird(pygame.sprite.Sprite):
                 self.bird_type = "BIRDIE"
                 self.image, self.rect = self.edit_image(length)
         self.resize(length)
-
+        print("left:", self.rect.left, "right:", self.rect.right)
 
 
     def resize(self, newLength):
@@ -125,7 +114,6 @@ class ZippedBird(pygame.sprite.Sprite):
             for key, val in self.need_append.items():
                 if val == 0:
                     self.left_prob_dict[key] = 0
-        pass
 
     def updateRightProb(self):
         #YOUR CODE HERE
@@ -133,7 +121,6 @@ class ZippedBird(pygame.sprite.Sprite):
             for key, val in self.need_append.items():
                 if val == 0:
                     self.right_prob_dict[key] = 0
-        pass
 
     def fly(self):
         """move the bird across the screen, and bounce at the ends"""
@@ -151,38 +138,50 @@ class ZippedBird(pygame.sprite.Sprite):
 
 
     def apply_effect(self):
-        self.bird_type, on_right = self.getSpecial()
         self.special_marker = self.rect.right - self.bird_size[0] if self.on_right else self.rect.left + self.bird_size[0] #position of the end of special bird block
-        self.effect_dict[self.bird_type](on_right)
+        print(self.special_marker, self.rect.left, self.rect.right)
+        self.effect_dict[self.bird_type]()
 
-    def apply_fatso(self, on_right):
-        if on_right:
-            length_eaten = Game.right_bound - self.special_marker # TODO: margin
-            self.rect.right = self.special_marker - length_eaten
+    def apply_fatso(self):
+        if self.on_right:
+            print("right")
+            length_eaten = self.rect.right - self.special_marker # TODO: margin
         else:
-            length_eaten = self.special_marker - Game.left_bound # TODO: margin
-            self.rect.left = self.special_marker + length_eaten
-        self.splice_image(length_eaten, on_right, True)
+            print('left')
+            length_eaten = self.special_marker - self.rect.left # TODO: margin
+        self.bird_type = "BIRDIE"
+        #print("pos:", self.rect.left, self.rect.right)
+        print(self.length, length_eaten, self.length - 2 * length_eaten)
+        if self.length - 2 * length_eaten > 0:
+            self.length = self.length - 2 * length_eaten
+            self.image = self.edit_image(self.length, True)[0]
+            print("after pos:", self.rect.left, self.rect.right, self.length)
+
+        else:
+            self.game.is_negative_length = True
+            print("game over cuz length exceeds by ", self.length - 2 * length_eaten)
 
     def apply_squiddy(self):
         #Game.squiddy_clock = pygame.time.Clock()
         #Game.squiddy_clock.tick()
 
-        SquidInk(self.game, self.ink_turn)
-
+        ink = SquidInk(self.game, self.ink_turn)
+        ink.update()
 
     def apply_invincible(self): #TODO: make a long block
-        #YOUR CODE HERE
-        pass
+        self.game.invincible = True
 
     def apply_tree(self):
         if self.on_right:
-            length_built = Game.right_bound - self.rect.right
-            self.rect.right += length_built
+            print("right")
+            length_built = self.rect.right - self.special_marker # TODO: margin
         else:
-            length_built = self.rect.left - Game.left_bound
-            self.rect.left -= length_built
-        self.splice_image(length_built, on_right, False)
+            print('left')
+            length_built = self.special_marker - self.rect.left
+        self.length += length_built
+        self.image, self.rect = self.edit_image(self.length, True)
+        print("after pos:", self.rect.left, self.rect.right, self.length)
+
 
     def edit_image(self, length, splicing = True):
         #YOUR CODE HERE
