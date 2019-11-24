@@ -158,9 +158,9 @@ class Game:
             onScreen = [d for d in dir if screenRect.contains(d)]
 
 
-            self.screen.blit(self.bigSurface, (0,0), screenRect)
+            #self.screen.blit(self.bigSurface, (0,0), screenRect)
 
-            #self.screen.blits((self.bigSurface, self.toBiggie(d), d) for d in onScreen)
-            #pygame.display.update([self.toBiggie(d) for d in onScreen])#TODO: replace with blit from bigsurface
+            self.screen.blits((self.bigSurface, self.toBiggie(d), d) for d in onScreen)
+            pygame.display.update([self.toBiggie(d) for d in onScreen])#TODO: replace with blit from bigsurface
 
-            pygame.display.flip()
+            #pygame.display.flip()
