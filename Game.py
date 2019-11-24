@@ -111,6 +111,10 @@ class Game:
 
         #TODO: do special effects
 
+        flock.place(self.left_bound, self.right_bound, length)
+        flock.relocate(self.fromBiggiePoint((x,y)))
+        flock.stationary = True
+        self.tower.add(flock)
 
         self.right_bound = min(right, self.right_bound) #resets left and right bounds
         self.left_bound = max(left, self.left_bound)
@@ -123,10 +127,7 @@ class Game:
         #new = ZippedBird(self, length,self.fromBiggiePoint((x, y)))
         #new.stationary = True
         #self.tower.add(new)
-        flock.place(self.left_bound, self.right_bound)
-        flock.relocate(self.fromBiggiePoint((x,y)))
-        flock.stationary = True
-        self.tower.add(flock)
+
 
         moving = ZippedBird(self,length,self.fromBiggiePoint((200, y-50)))
         print(len(self.tower.sprites()),len(self.murdered.sprites()), len(self.allsprites.sprites()) )

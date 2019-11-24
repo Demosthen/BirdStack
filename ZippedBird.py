@@ -9,7 +9,7 @@ class ZippedBird(pygame.sprite.Sprite):
     bird_size = (50,50)
     image_dict = {"BIRDIE": "scooter.png",
                     "FATSO": "fatso.jpg",
-                    "SQUIDDY": "scooter.png",
+                    "SQUIDDY": "squid.jpg",
                     "INVINCIBLE": "invincible.jpg",
                     "TREE": "tree.png"}
     need_append = {"BIRDIE": -1,# 1 if need to increase length, 0 if don't need to increase length
@@ -71,7 +71,8 @@ class ZippedBird(pygame.sprite.Sprite):
         #CHECK COORDINATES to see if you need to draw it
         if not self.stationary:
             self.fly()
-    def place(self, left_bound, right_bound):
+
+    def place(self, left_bound, right_bound, length):
         if self.bird_type != "BIRDIE":
             if self.on_right:
                 special_right = self.rect.right
@@ -80,13 +81,16 @@ class ZippedBird(pygame.sprite.Sprite):
                 special_right = self.rect.left + self.bird_size[0]
                 special_left = self.rect.left
             if left_bound >= special_left or right_bound <= special_right:
+                print("BIRDIE!!", left_bound, special_left, right_bound, special_right)
                 self.bird_type = "BIRDIE"
-        self.resize(right_bound - left_bound)
+                self.image, self.rect = self.edit_image(length)
+        self.resize(length)
 
 
 
     def resize(self, newLength):
-        self.image, self.rect = self.edit_image(newLength)
+        new = pygame.transform.scale(self.image, (newLength, self.image.get_height()))
+        self.image, self.rect = new, new.get_rect()
 
     def relocate(self, newLoc):
         self.rect.center = self.game.translatePoint(newLoc)
