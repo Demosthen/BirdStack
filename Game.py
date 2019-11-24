@@ -86,6 +86,13 @@ class Game:
             flock.rect.move(self.left_bound - flock.rect.left, 0)
         flock.stationary = True
 
+
+        x = min(flock.rect.right, self.right_bound)
+        y = flock.rect.y
+        length = min(flock.rect.right, self.right_bound) - max(flock.rect.left, self.left_bound) #resize
+        if length<5:
+            return "u suck u lose"
+
         #FIX MUDRDERED BIRDS
         if (self.right_bound - flock.rect.right > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
             for i in range((self.right_bound - flock.rect.right)//bird_width):
@@ -98,22 +105,21 @@ class Game:
 
         #TODO: do special effects
 
-        x = min(flock.rect.right, self.right_bound)
-        y = flock.rect.y
-        length = min(flock.rect.right, self.right_bound) - max(flock.rect.left, self.left_bound) #resize
-        if length<5:
-            return "u suck u lose"
+
         self.right_bound = flock.rect.right #resets left and right bounds
         self.left_bound = flock.rect.left
 
         #self.towerSprites.add(self.flock)
         flock.kill()
-        print(x,y)
-        print(length) #LENGTH IS OFF, FIX
+        #print(x,y)
+        #print(length) #LENGTH IS OFF, FIX
 
         new = ZippedBird(self, length,self.fromBiggiePoint((x, y)))
+        new.stationary = True
         self.tower.add(new)
-        print(new.rect.size)
+        moving = ZippedBird(self,length,self.fromBiggiePoint((200, y-50)))
+        print(len(self.tower.sprites()),len(self.murdered.sprites()), len(self.allsprites.sprites()) )
+
 
 
     """if (some key down):
@@ -137,7 +143,7 @@ class Game:
         base = ZippedBird(self,length,(self.screen.get_width()/2,self.screen.get_height()-100))
         base.stationary = True
         self.tower.add(base)
-        self.allsprites.add(base)
+        #self.allsprites.add(base)
         pos_y = min([each.rect.y for each in self.tower.sprites()]) - 50#self.tower.sprites()[0].bird_size[1]
         moving = ZippedBird(self,length,self.fromBiggiePoint((200, pos_y)))
         while play:
