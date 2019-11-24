@@ -7,7 +7,8 @@ from ZippedBird import *
 from CustomGroup import *
 
 class Game:
-    def __init__(self, screensize = (468,468)):
+    screensize = (468,468)
+    def __init__(self, screensize = Game.screensize):
         self.bird_density = "placeholder"
         self.score = 0
         self.screen = pygame.display.set_mode(screensize)
@@ -50,7 +51,8 @@ class Game:
         self.gui = pygame.sprite.RenderUpdates()
         self.clock = pygame.time.Clock()
         self.scroll = 5 # amount it scrolls each frame
-        self.squiddy_clock = pygame.time.Clock()
+        #self.squiddy_time = 1500
+        self.turns = 0
         #TODO: initialize with ZippedBird base
         #TODO: add GUI BUTTONS (PLAY/PAUSE, SCORE, RESTART)
         #TODO: actually make the zippedbird when you start the game
@@ -119,7 +121,7 @@ class Game:
         self.tower.add(new)
         moving = ZippedBird(self,length,self.fromBiggiePoint((200, y-50)))
         print(len(self.tower.sprites()),len(self.murdered.sprites()), len(self.allsprites.sprites()) )
-
+        self.turns += 1
 
 
     """if (some key down):
