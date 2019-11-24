@@ -12,7 +12,7 @@ class ZippedBird(pygame.sprite.Sprite):
                     "SQUIDDY": "scooter.png",
                     "INVINCIBLE": "invincible.jpg",
                     "TREE": "tree.png"}
-    need_append = {"BIRDIE": 0,# 1 if need to increase length, 0 if don't need to increase length
+    need_append = {"BIRDIE": -1,# 1 if need to increase length, 0 if don't need to increase length
                     "FATSO": 1,
                     "SQUIDDY": 1,
                     "INVINCIBLE": 0,
@@ -98,10 +98,18 @@ class ZippedBird(pygame.sprite.Sprite):
 
     def updateLeftProb(self):
         #YOUR CODE HERE
+        if self.game.right_bound - self.game.left_bound < self.bird_size[0]:
+            for key, val in self.need_append.items():
+                if val == 0:
+                    self.left_prob_dict[key] = 0
         pass
 
     def updateRightProb(self):
         #YOUR CODE HERE
+        if self.game.right_bound - self.game.left_bound < self.bird_size[0]:
+            for key, val in self.need_append.items():
+                if val == 0:
+                    self.right_prob_dict[key] = 0
         pass
 
     def fly(self):
@@ -150,11 +158,14 @@ class ZippedBird(pygame.sprite.Sprite):
             self.rect.left -= length_built
         self.splice_image(length_built, on_right, False)
 
-    def edit_image(self, length, on_right, splicing = True): #TODO: splice to add/delete part of the image
+    def edit_image(self, length, on_right, splicing = True):
         #YOUR CODE HERE
         imgs = [0,0]
+        if self.bird_type == "BIRDIE":
+            img = Load.load_image('scooter.png', -1, (length,self.bird_size[1]))[0]
+            return img, img.get_rect()
         imgs[on_right] = Load.load_image(self.image_dict[self.bird_type], -1,self.bird_size)[0]
-        imgs[not on_right] = Load.load_image('scooter.png', -1, (length - self.bird_size[0],self.bird_size[1]))[0]
+        imgs[not on_right] = Load.load_image('scooter.png', -1, (length - self.bird_size[0] * (not self.need_append[self.bird_type]),self.bird_size[1]))[0]
         return self.splice_image(imgs)
 
     def splice_image(self, imgs):#concatenates a list of images into one surface
