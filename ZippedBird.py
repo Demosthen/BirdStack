@@ -9,7 +9,7 @@ class ZippedBird(pygame.sprite.Sprite):
     bird_size = (50,50)
     image_dict = {"BIRDIE": "scooter.png",
                     "FATSO": "fatso.jpg",
-                    "SQUIDDY": "scooter.png",
+                    "SQUIDDY": "squid.jpg",
                     "INVINCIBLE": "invincible.jpg",
                     "TREE": "tree.png"}
     need_append = {"BIRDIE": -1,# 1 if need to increase length, 0 if don't need to increase length
@@ -49,7 +49,8 @@ class ZippedBird(pygame.sprite.Sprite):
         screen = pygame.display.get_surface()
         self.stationary = False
         self.rect.center = self.game.translatePoint(startPos)
-
+        self.ink_turn = 3
+        self.margin = 25
         self.area = screen.get_rect() # TODO: UPDATE THIS ACCORDING TO GAME SCREEN POSITION
         #self.length = game.right_bound - game.left_bound
         if self.bird_type == "BIRDIE":
@@ -72,8 +73,30 @@ class ZippedBird(pygame.sprite.Sprite):
         if not self.stationary:
             self.fly()
 
-    def getSpecial(self):
+    def place(self, left_bound, right_bound, length):
+        if self.bird_type != "BIRDIE":
+            if self.on_right:
+                special_right = self.rect.right
+                special_left = self.rect.right - self.bird_size[0]
+            else:
+                special_right = self.rect.left + self.bird_size[0]
+                special_left = self.rect.left
+            if left_bound >= special_left or right_bound <= special_right:
+                print("BIRDIE!!", left_bound, special_left, right_bound, special_right)
+                self.bird_type = "BIRDIE"
+                self.image, self.rect = self.edit_image(length)
+        self.resize(length)
 
+
+
+    def resize(self, newLength):
+        new = pygame.transform.scale(self.image, (newLength, self.image.get_height()))
+        self.image, self.rect = new, new.get_rect()
+
+    def relocate(self, newLoc):
+        self.rect.center = self.game.translatePoint(newLoc)
+
+    def getSpecial(self):
         on_right = random.random() >= 0.5
         probs = self.right_prob_dict if on_right else self.left_prob_dict
         total = sum(probs.values())
@@ -141,9 +164,12 @@ class ZippedBird(pygame.sprite.Sprite):
             self.rect.left = self.special_marker + length_eaten
         self.splice_image(length_eaten, on_right, True)
 
-    def apply_squiddy(self): #TODO: Black screen for some time
-        #YOUR CODE HERE
-        pass
+    def apply_squiddy(self):
+        #Game.squiddy_clock = pygame.time.Clock()
+        #Game.squiddy_clock.tick()
+
+        SquidInk(self.game, self.ink_turn)
+
 
     def apply_invincible(self): #TODO: make a long block
         #YOUR CODE HERE
@@ -158,14 +184,14 @@ class ZippedBird(pygame.sprite.Sprite):
             self.rect.left -= length_built
         self.splice_image(length_built, on_right, False)
 
-    def edit_image(self, length, on_right, splicing = True):
+    def edit_image(self, length, splicing = True):
         #YOUR CODE HERE
         imgs = [0,0]
         if self.bird_type == "BIRDIE":
             img = Load.load_image('scooter.png', -1, (length,self.bird_size[1]))[0]
             return img, img.get_rect()
-        imgs[on_right] = Load.load_image(self.image_dict[self.bird_type], -1,self.bird_size)[0]
-        imgs[not on_right] = Load.load_image('scooter.png', -1, (length - self.bird_size[0] * (not self.need_append[self.bird_type]),self.bird_size[1]))[0]
+        imgs[self.on_right] = Load.load_image(self.image_dict[self.bird_type], -1,self.bird_size)[0]
+        imgs[not self.on_right] = Load.load_image('scooter.png', -1, (length - self.bird_size[0] * (not self.need_append[self.bird_type]),self.bird_size[1]))[0]
         return self.splice_image(imgs)
 
     def splice_image(self, imgs):#concatenates a list of images into one surface
