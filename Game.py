@@ -47,13 +47,15 @@ class Game:
         #TODO: actually make the zippedbird when you start the game
         self.flock = ZippedBird(self, (100,100)) #TODO: please change this
 
-    def calcScreenRect(self):
-        return Rect(0, self.screen_height, self.screen.get_width(), self.screen_height+self.screen.get_height())
+    def calcScreenRect(self):# calculate the screen's rect within bigSurface
+        return Rect(0, self.bigSurface.get_height()- self.screen.get_height() -self.screen_height, self.screen.get_width(), self.bigSurface.get_height() - self.screen_height)
 
-    def translateRect(self, rect):
+    def translateRect(self, rect):#translate a rect from screen coordinates to bigSurface coordinates
         screenRect = self.calcScreenRect()
-        return Rect(rect.left, rect.top + screenRect.top, rect.right, rect.bottom + screenRect.bottom)
+        return Rect(rect.left, rect.top + screenRect.top, rect.right, rect.bottom + screenRect.top)
 
+    def translatePoint(self,tuple):# translate a point from screen coordinates to bigSurface coordinates
+        return (tuple[0], tuple[1] + self.bigSurface.get_height()- self.screen.get_height() -self.screen_height)
 
 
     def place(self):#TODO:
@@ -112,7 +114,7 @@ class Game:
                     self.place() #TODO: fill in any parameters
 
             if scrolling:
-                self.screen_height -= 1
+                self.screen_height += 1
             self.allsprites.update()
             dir = self.allsprites.draw(self.bigSurface) #TODO: ONLY DRAW ONES ONSCREEN BY SUBCLASSING GROUP
             # TODO: draw to bigsurface, not screen
@@ -120,6 +122,6 @@ class Game:
             onScreen = [d for d in dir if screenRect.contains(d)]
             self.screen.blit(self.bigSurface, (0,0), screenRect)
             #self.screen.blits((self.bigSurface, (d.left, d.top - screenRect.top), d) for d in onScreen)
-            self.allsprites.clear(self.bigSurface,self.background)
             #pygame.display.update([self.translateRect(d) for d in onScreen])#TODO: replace with blit from bigsurface
             pygame.display.flip()
+            self.allsprites.clear(self.bigSurface,self.background)

@@ -12,6 +12,7 @@ class MurderedBird(pygame.sprite.Sprite):
         self.dropping = False
         self.stationary = False
         self.rect.center = startPos
+        self.
         self.area = screen.get_rect()
 
     def update(self):
