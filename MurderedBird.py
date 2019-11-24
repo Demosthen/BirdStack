@@ -15,8 +15,7 @@ class MurderedBird(pygame.sprite.Sprite):
         screen = pygame.display.get_surface()
         self.dropping = False
         self.stationary = False
-        self.rect.center = startPos
-        self.
+        self.rect.center = self.game.translatePoint(startPos)
         self.area = screen.get_rect()
         for each in self.groups:
             each.add(self)
@@ -31,7 +30,8 @@ class MurderedBird(pygame.sprite.Sprite):
     def fly(self):
         """move the bird across the screen, and turn at the ends"""
         newpos = self.rect.move((self.move, 0))
-        if not self.area.contains(newpos):
+        area = self.game.calcScreenRect()
+        if not area.contains(newpos):
             if self.rect.left < self.area.left or \
                     self.rect.right > self.area.right:
                 self.move = -self.move

@@ -20,7 +20,7 @@ class ZippedBird(pygame.sprite.Sprite):
         self.image, self.rect = self.load_spliced_image('scooter.png', startPos)
         screen = pygame.display.get_surface()
         self.stationary = False
-        self.rect.center = startPos
+        self.rect.center = self.game.translatePoint(startPos)
         self.area = screen.get_rect() # TODO: UPDATE THIS ACCORDING TO GAME SCREEN POSITION
         self.left_prob_dict = {"BIRDIE": 6,
                         "FATSO": 1,
