@@ -44,6 +44,8 @@ class Game:
         self.screen.blit(self.bigSurface, (0,0), area = self.calcScreenRect())
         pygame.display.flip()
         self.allsprites = pygame.sprite.RenderUpdates()
+        self.towerSprites = pygame.sprite.RenderUpdates()
+        self.tolerance = 20# TODO: ADJUST LATER
         self.murdered = pygame.sprite.RenderUpdates()
         self.tower = CustomGroup()
         self.zipBird = pygame.sprite.GroupSingle()
@@ -53,8 +55,10 @@ class Game:
         #TODO: add GUI BUTTONS (PLAY/PAUSE, SCORE, RESTART)
         #TODO: actually make the zippedbird when you start the game
         self.flock = ZippedBird(self, (100,100)) #TODO: please change this
+
     def calcScreenRect(self):
         return Rect(0, self.screen_height, self.screen.get_width(), self.screen_height+self.screen.get_height())
+
     def translateRect(self, rect):
         screenRect = self.calcScreenRect()
         return Rect(rect.left, rect.top + screenRect.top, rect.right, rect.bottom + screenRect.bottom)
@@ -65,6 +69,7 @@ class Game:
         #YOUR CODE HERE
         #check the position of the zipped bird, compare with the tower left and right bounds, resize+move to tower group, generate extra birds to toss if needed (and specials)
         #check if there are special birds there that do stuff and do their effect
+        bird_width = Bird.bird_size[0]
         if abs(self.right_bound - self.flock.rect.right) <= self.tolerance: #move it over if within certain tolerance
             self.flock.rect.move(self.right_bound - self.flock.rect.right, 0)
         elif abs(self.left_bound - self.flock.rect.left) <= self.tolerance:
@@ -128,7 +133,7 @@ class Game:
 
 
             if scrolling:
-                self.screen_height += 1
+                self.screen_height -= 1
             self.allsprites.update()
             dir = self.allsprites.draw(self.bigSurface) #TODO: ONLY DRAW ONES ONSCREEN BY SUBCLASSING GROUP
             # TODO: draw to bigsurface, not screen

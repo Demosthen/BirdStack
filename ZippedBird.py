@@ -1,6 +1,7 @@
 import random
 import os, sys
 import pygame
+import Load
 from pygame.locals import *
 class ZippedBird(pygame.sprite.Sprite):
     move = 9
@@ -14,7 +15,7 @@ class ZippedBird(pygame.sprite.Sprite):
     def __init__(self, game, startPos = (100,100)):
         pygame.sprite.Sprite.__init__(self)
         self.game = game
-        self.image, self.rect = self.load_spliced_image('scooter.png', -1, startPos)
+        self.image, self.rect = self.load_spliced_image('scooter.png', startPos)
         screen = pygame.display.get_surface()
         self.stationary = False
         self.rect.center = startPos
@@ -113,4 +114,5 @@ class ZippedBird(pygame.sprite.Sprite):
 
     def edit_image(self, length, on_right, splicing = True): #TODO: splice to add/delete part of the image
         #YOUR CODE HERE
+        return Load.load_image('scooter.png', -1, length)
         pass
