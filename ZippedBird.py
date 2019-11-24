@@ -32,6 +32,9 @@ class ZippedBird(pygame.sprite.Sprite):
                         "TREE": 1}
         updateLeftProb()
         updateRightProb()
+        #use getSpecial() to determine if you're going to have a special bird
+        #splice images and do stuff
+        #actually make the thing show up
 
     def update(self):
         #CHECK COORDINATES
