@@ -110,13 +110,18 @@ class Game:
         self.left_bound = max(flock.rect.left, self.left_bound)
 
         #self.towerSprites.add(self.flock)
-        flock.kill()
+        #flock.kill()
         #print(x,y)
         #print(length) #LENGTH IS OFF, FIX
 
-        new = ZippedBird(self, length,self.fromBiggiePoint((x, y)))
-        new.stationary = True
-        self.tower.add(new)
+        #new = ZippedBird(self, length,self.fromBiggiePoint((x, y)))
+        #new.stationary = True
+        #self.tower.add(new)
+        flock.place(self.left_bound, self.right_bound)
+        flock.relocate(self.fromBiggiePoint((x,y)))
+        flock.stationary = True
+        self.tower.add(flock)
+
         moving = ZippedBird(self,length,self.fromBiggiePoint((200, y-50)))
         print(len(self.tower.sprites()),len(self.murdered.sprites()), len(self.allsprites.sprites()) )
 
