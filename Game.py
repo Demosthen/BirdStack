@@ -102,6 +102,8 @@ class Game:
 
     def run(self):
         scrolling = False
+        play = True
+        self.tower.add(ZippedBird(self,(200,200)))
         while play:
             self.clock.tick(60)
             move = True
