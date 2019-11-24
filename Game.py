@@ -49,9 +49,11 @@ class Game:
         self.zipBird = pygame.sprite.GroupSingle()
         self.gui = pygame.sprite.RenderUpdates()
         self.clock = pygame.time.Clock()
+        self.is_negative_length = False
         self.scroll = 5 # amount it scrolls each frame
         #self.squiddy_time = 1500
         self.turns = 0
+        self.invincible = False
         #TODO: initialize with ZippedBird base
         #TODO: add GUI BUTTONS (PLAY/PAUSE, SCORE, RESTART)
         #TODO: actually make the zippedbird when you start the game
@@ -98,8 +100,7 @@ class Game:
         #x = flock.rect.centerx
         y = flock.rect.centery
         length = min(right, self.right_bound) - max(left, self.left_bound) #resize
-        if length<5:
-            return "u suck u lose"
+
         #FIX MUDRDERED BIRDS
         # if (self.right_bound - flock.rect.right > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
         #     for i in range((self.right_bound - flock.rect.right)//bird_width):
@@ -110,16 +111,19 @@ class Game:
         #     for i in range((flock.rect.left - self.right_bound)//bird_width):
         #         self.murdered.add(MurderedBird(self,(flock.rect.left + bird_width*i, flock.rect.y)))
 
-        #TODO: do special effects
-
+        print("placed:", flock.bird_type)
         flock.place(self.left_bound, self.right_bound, length)
+        if flock.bird_type != "BIRDIE": #apply special effect if it's not normal bird
+            flock.apply_effect()
+        length = flock.length
         flock.relocate(self.fromBiggiePoint((x,y)))
         flock.stationary = True
         self.tower.add(flock)
 
         self.right_bound = min(right, self.right_bound) #resets left and right bounds
         self.left_bound = max(left, self.left_bound)
-
+        if length < 5 or self.is_negative_length:
+            return "u suck u lose"
         #self.towerSprites.add(self.flock)
         #flock.kill()
         #print(x,y)
@@ -129,10 +133,17 @@ class Game:
         #new.stationary = True
         #self.tower.add(new)
 
-
-        moving = ZippedBird(self,length,self.fromBiggiePoint((200, y-50)))
+        "handle apply_invincible"
+        if self.invincible:
+            moving = ZippedBird(self,468,self.fromBiggiePoint((200, y-50)))
+            self.invincible = False
+            print(moving.length)
+        else:
+            moving = ZippedBird(self,length,self.fromBiggiePoint((200, y-50)))
+        print("bird_type: ", moving.bird_type)
         print(len(self.tower.sprites()),len(self.murdered.sprites()), len(self.allsprites.sprites()) )
         self.turns += 1
+        print("turn: ", self.turns)
 
 
     """if (some key down):
