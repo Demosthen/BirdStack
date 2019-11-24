@@ -4,12 +4,14 @@ from pygame.locals import *
 from Bird import *
 from Load import *
 from ZippedBird import *
+from CustomGroup import *
+
 class Game:
     def __init__(self, screensize = (468,468)):
-        self.bird_density = "placeholder"#TODO: fill this in
+        self.bird_density = "placeholder"
         self.score = 0
-        self.left_bound = 0
-        self.right_bound = 0
+        self.left_bound = 0 #bound of top layer of tower
+        self.right_bound = 0 #bound of top layer of tower
         self.murders = {"BIRDIE": 0,
                         "FATSO": 0,
                         "SQUIDDY": 0,
@@ -20,11 +22,11 @@ class Game:
                         "SQUIDDY": 0,
                         "INVINCIBLE": 0,
                         "TREE": 0}
+        self.gui_sprites = { "PAUSE_PLAY" : "scooter.png",
+                            "RESTART" : "scooter.png" }
         pygame.init()
         self.screen = pygame.display.set_mode(screensize)
         pygame.display.set_caption("BIRD STACK")
-        self.bigSurface = 0 # TODO: initialize big surface
-        self.screenPos = ("placeholder", "placeholder")#TODO: fill this in
         self.background = pygame.Surface(self.screen.get_size())
         self.background = self.background.convert()
         self.background.fill((250,250,250))
@@ -32,23 +34,39 @@ class Game:
             font = pygame.font.Font(None, 36)
             text = font.render("STACK THE BIRDSSSSSSSS", 1, (10, 10, 10))
             textpos = text.get_rect(centerx=self.background.get_width()/2)
+            score = font.render("Score"+ self.score, True, (10, 10, 10))
+            scorepos = text.get_rect(top_right = (self.screensize[],))#this is unfinished
             self.background.blit(text, textpos)
-        self.screen.blit(self.background, (0,0)) # TODO: pass area Rect to display only part of it
+            self.background.blit(score,scorepos)
+        #put GUI sprites here
+        self.screen.blit(self.background, (0,0))
         pygame.display.flip()
         self.allsprites = pygame.sprite.RenderUpdates()
-        self.towerSprites = pygame.sprite.RenderUpdates()
+        self.murdered = pygame.sprite.RenderUpdates()
+        self.tower = CustomGroup()
+        self.zipBird = pygame.sprite.GroupSingle()
+        self.gui = pygame.sprite.RenderUpdates()
         self.clock = pygame.time.Clock()
-        #TODO: add GUI BUTTONS (PLAY/PAUSE, SCORE, RESTART)
 
-    def place(self):#TODO:
-        #YOUR CODE HERE
-        pass
-
-    def gameEnded(self):#TODO:
-        #YOUR CODE HERE
+    def check_GUI(self): #pause/play, restart; sprites, will get added into allsprites
         pass
 
     def run(self):
+        while play:
+            move = True
+            pos_y = max[each.rect.y for each in self.tower] + self.tower[0].bird_size[1]
+            self.zipBird.add(ZippedBird(self,(0, pos_y)))
+            while move:
+                self.zipBird[0].fly()
+                self.check_GUI()
+                cursor_pos = mouse.get_pos()
+                #cursor_rect = Rect(cursor_pos[0]-1,cursor_pos[1]+1,2,2)
+                if event.type = MOUSEBUTTONDOWN and (not any[each.collidepoint(cursor_pos) for each in self.gui]):
+                    move = False
+            #place, splice, drop here
+            #update screen accordingly
+            #check if game has ended
+
         while 1:
             self.clock.tick(60)
             for event in pygame.event.get():
@@ -57,12 +75,11 @@ class Game:
                 elif event.type == KEYDOWN and event.key == K_ESCAPE:
                     return
                 elif event.type == MOUSEBUTTONDOWN:
-                    pass
+                    self.allsprites.add(Bird())
                 elif event.type == MOUSEBUTTONUP:
-                    self.place() #TODO: fill in any parameters
+                    for sprite in self.allsprites.sprites():
+                        sprite.dropping = True
             self.allsprites.update()
-            dir = self.allsprites.draw(self.screen) #TODO: ONLY DRAW ONES ONSCREEN BY SUBCLASSING GROUP
-            # TODO: draw to bigsurface, not screen
-            pygame.display.update(dir)#TODO: replace with blit from bigsurface
-
+            dir = self.allsprites.draw(self.screen)
+            pygame.display.update(dir)
             self.allsprites.clear(self.screen,self.background)
