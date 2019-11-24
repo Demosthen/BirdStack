@@ -39,7 +39,8 @@ class Game:
         pygame.display.flip()
         self.allsprites = pygame.sprite.RenderUpdates()
         self.towerSprites = pygame.sprite.RenderUpdates()
-        self.tolerance = 20# TODO: ADJUST LATER
+        self.tolerance = 20 # TODO: ADJUST LATER
+        self.deadbirdsprites = pygame.sprite.RenderUpdates() #TODO: please implement this/make it show up
         self.clock = pygame.time.Clock()
         #TODO: initialize with ZippedBird base
         #TODO: add GUI BUTTONS (PLAY/PAUSE, SCORE, RESTART)
@@ -68,24 +69,27 @@ class Game:
 
         if (self.right_bound - self.flock.rect.right > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
             for i in range((self.right_bound - self.flock.rect.right)//bird_width):
-                #TODO: make a murderedbird
-                #ALSO: check if there's a special in there so that you generate a dead one of those
+                self.deadbirdsprites.add(MurderedBird((self.flock.rect.right - bird_width*i), self.flock.rect.y))
+                #TODO: check if there's a special in there so that you generate a dead one of those
                 pass
         if (self.flock.rect.left - self.left_bound > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
             for i in range((self.flock.rect.left - self.right_bound)//bird_width):
-                #TODO: make a murderedbird
+                self.deadbirdsprites.add(MurderedBird((self.flock.rect.left + bird_width*i), self.flock.rect.y))
                 pass
 
         self.right_bound = self.flock.rect.right
         self.left_bound = self.flock.rect.left
         #TODO: move it to the tower group
         #TODO: do specials
-        #TODO: check if gameEnded
-        #TODO: move screen up, then create new flock
+
 
         pass
 
     def gameEnded(self):#TODO:
+        #YOUR CODE HERE
+        pass
+
+    def endGame(self):#TODO: do the downward scroll, generate the dead bird pile, etc
         #YOUR CODE HERE
         pass
 
