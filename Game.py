@@ -42,7 +42,7 @@ class Game:
         self.bigSurface.blit(self.background, (0,0)) # TODO: pass area Rect to display only part of it
         self.screen.blit(self.bigSurface, (0,0), area = self.calcScreenRect())
         pygame.display.flip()
-        self.tolerance = 500# TODO: ADJUST LATER
+        self.tolerance = 10# TODO: ADJUST LATER
         self.allsprites = pygame.sprite.RenderUpdates()
         self.murdered = pygame.sprite.RenderUpdates()
         self.tower = CustomGroup()
@@ -79,17 +79,23 @@ class Game:
         #check if there are special birds there that do stuff and do their effect
         flock = self.zipBird.sprites()[0]
         bird_width = MurderedBird.bird_size[0]
-        if abs(self.right_bound - flock.rect.right) <= self.tolerance: #move it over if within certain tolerance
-            flock.rect.move(self.right_bound - flock.rect.right, 0)
-        elif abs(self.left_bound - flock.rect.left) <= self.tolerance:
-            flock.rect.move(self.left_bound - flock.rect.left, 0)
+        left = flock.rect.left
+        right = flock.rect.right
+        if abs(self.right_bound - right) <= self.tolerance: #move it over if within certain tolerance
+            right += self.right_bound - flock.rect.right
+            left += self.right_bound - flock.rect.right
+            # flock.rect.move(self.right_bound - flock.rect.right, 0)
+        elif abs(self.left_bound - left) <= self.tolerance:
+            right += self.left_bound - flock.rect.left
+            left += self.left_bound - flock.rect.left
+            # flock.rect.move(self.left_bound - flock.rect.left, 0)
         flock.stationary = True
 
 
-        x = (min(flock.rect.right, self.right_bound) + max(flock.rect.left, self.left_bound))/2
+        x = (min(right, self.right_bound) + max(left, self.left_bound))/2
         #x = flock.rect.centerx
         y = flock.rect.centery
-        length = min(flock.rect.right, self.right_bound) - max(flock.rect.left, self.left_bound) #resize
+        length = min(right, self.right_bound) - max(left, self.left_bound) #resize
         if length<5:
             return "u suck u lose"
         #FIX MUDRDERED BIRDS
@@ -105,8 +111,8 @@ class Game:
         #TODO: do special effects
 
 
-        self.right_bound = min(flock.rect.right, self.right_bound) #resets left and right bounds
-        self.left_bound = max(flock.rect.left, self.left_bound)
+        self.right_bound = min(right, self.right_bound) #resets left and right bounds
+        self.left_bound = max(left, self.left_bound)
 
         #self.towerSprites.add(self.flock)
         flock.kill()
