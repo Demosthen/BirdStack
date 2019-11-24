@@ -113,7 +113,7 @@ class ZippedBird(pygame.sprite.Sprite):
 
 
     def apply_effect(self):
-        self.bird_type, on_right = self.getSpecial
+        self.bird_type, on_right = self.getSpecial()
         self.special_marker = self.rect.right - self.bird_size[0] if self.on_right else self.rect.left + self.bird_size[0] #position of the end of special bird block
         self.effect_dict[self.bird_type](on_right)
 
@@ -144,6 +144,12 @@ class ZippedBird(pygame.sprite.Sprite):
         self.splice_image(length_built, on_right, False)
 
     def edit_image(self, length, on_right, splicing = True): #TODO: splice to add/delete part of the image
-        #YOUR CODE HERE
-        return Load.load_image('scooter.png', -1, (length,self.bird_size[1]))
+        #YOUR CODE HERE4
+        return self.splice_image(Load.load_image('scooter.png', -1, (length//2,self.bird_size[1]))[0],Load.load_image('scooter.png', -1, (length//2,self.bird_size[1]))[0])
         pass
+
+    def splice_image(self, left_img, right_img):
+        new_img = pygame.Surface((left_img.get_width() + right_img.get_width(), max(left_img.get_height(), right_img.get_height())))
+        new_img.blit(left_img, (0,0))
+        new_img.blit(right_img, (left_img.get_width(), 0))
+        return new_img, new_img.get_rect()
