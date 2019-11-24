@@ -28,7 +28,6 @@ class Game:
         self.screen = pygame.display.set_mode(screensize)
         pygame.display.set_caption("BIRD STACK")
         self.bigSurface = pygame.Surface((self.screen.get_width(), self.screen.get_height() * 20))
-        self.screenPos = ("placeholder", "placeholder")#TODO: fill this in
         self.background = pygame.Surface(self.bigSurface.get_size())
         self.background = self.background.convert()
         self.background.fill((250,250,250))
@@ -40,7 +39,7 @@ class Game:
             scorepos = text.get_rect(topright = (100,100))#this is unfinished
             self.background.blit(text, textpos)
         self.screen_height = 0
-        self.bigSurface.blit(self.background, self.calcScreenRect()) # TODO: pass area Rect to display only part of it
+        self.bigSurface.blit(self.background, (0,0)) # TODO: pass area Rect to display only part of it
         self.screen.blit(self.bigSurface, (0,0), area = self.calcScreenRect())
         pygame.display.flip()
         self.tolerance = 20# TODO: ADJUST LATER
@@ -185,7 +184,7 @@ class Game:
 
 
             if scrolling:
-                self.screen_height += 1
+                self.screen_height += self.scroll
             self.allsprites.update()
             #self.bigSurface.blit(self.background, self.calcScreenRect()) # TODO: pass area Rect to display only part of it
             self.allsprites.clear(self.bigSurface,self.background)
@@ -194,7 +193,9 @@ class Game:
             screenRect = self.calcScreenRect()
             onScreen = [d for d in dir if screenRect.contains(d)]# only blit the ones on screen
             if scrolling:
-                self.screen_height += self.scroll# move up screen
-                onScreen = [Rect(d.left, d.top - abs(self.scroll)*2, d.right, d.bottom + abs(self.scroll)*2) for d in onScreen] # correct dirty rectangles
+                #self.screen_height += self.scroll# move up screen
+                onScreen = [Rect(d.left - abs(self.scroll)*2, d.top - abs(self.scroll)*2, d.right+ abs(self.scroll)*2, d.bottom + abs(self.scroll)*2) for d in onScreen] # correct dirty rectangles
+            #self.screen.blit(self.bigSurface, (0,0), screenRect)
             self.screen.blits([(self.bigSurface, self.fromBiggie(d), d) for d in onScreen])
             pygame.display.update([self.fromBiggie(d) for d in onScreen])
+            #pygame.display.flip()
