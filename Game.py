@@ -7,8 +7,7 @@ from ZippedBird import *
 from CustomGroup import *
 
 class Game:
-    screensize = (468,468)
-    def __init__(self, screensize = Game.screensize):
+    def __init__(self, screensize = (468,468)):
         self.bird_density = "placeholder"
         self.score = 0
         self.screen = pygame.display.set_mode(screensize)
