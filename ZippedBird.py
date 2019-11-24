@@ -14,7 +14,7 @@ class ZippedBird(pygame.sprite.Sprite):
     def __init__(self, game, startPos = (100,100)):
         pygame.sprite.Sprite.__init__(self)
         self.game = game
-        self.image, self.rect = load_spliced_image('scooter.png', -1, startPos)
+        self.image, self.rect = self.load_spliced_image('scooter.png', -1, startPos)
         screen = pygame.display.get_surface()
         self.stationary = False
         self.rect.center = startPos
@@ -29,12 +29,12 @@ class ZippedBird(pygame.sprite.Sprite):
                         "SQUIDDY": 1,
                         "INVINCIBLE": 1,
                         "TREE": 1}
-        effect_dict = { "FATSO": self.apply_fatso,
+        self.effect_dict = { "FATSO": self.apply_fatso,
                         "SQUIDDY": self.apply_squiddy,
                         "INVINCIBLE": self.apply_invincible,
                         "TREE": self.apply_tree}
-        updateLeftProb()
-        updateRightProb()
+        self.updateLeftProb()
+        self.updateRightProb()
         #use getSpecial() to determine if you're going to have a special bird
         #splice images and do stuff
         #actually make the thing show up
