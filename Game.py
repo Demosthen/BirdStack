@@ -50,6 +50,7 @@ class Game:
         self.zipBird = pygame.sprite.GroupSingle()
         self.gui = pygame.sprite.RenderUpdates()
         self.clock = pygame.time.Clock()
+        self.scroll = 5 # amount it scrolls each frame
         #TODO: initialize with ZippedBird base
         #TODO: add GUI BUTTONS (PLAY/PAUSE, SCORE, RESTART)
         #TODO: actually make the zippedbird when you start the game
@@ -185,12 +186,9 @@ class Game:
             dir = self.allsprites.draw(self.bigSurface) #TODO: ONLY DRAW ONES ONSCREEN BY SUBCLASSING GROUP
             # TODO: draw to bigsurface, not screen
             screenRect = self.calcScreenRect()
-            onScreen = [d for d in dir if screenRect.contains(d)]
-
-
-            #self.screen.blit(self.bigSurface, (0,0), screenRect)
-
-            self.screen.blits((self.bigSurface, self.toBiggie(d), d) for d in onScreen)
-            pygame.display.update([self.toBiggie(d) for d in onScreen])#TODO: replace with blit from bigsurface
-
-            #pygame.display.flip()
+            onScreen = [d for d in dir if screenRect.contains(d)]# only blit the ones on screen
+            if scrolling:
+                self.screen_height += self.scroll# move up screen
+                onScreen = [Rect(d.left, d.top - abs(self.scroll), d.right, d.bottom + abs(self.scroll)) for d in onScreen] # correct dirty rectangles
+            self.screen.blits([(self.bigSurface, self.toBiggie(d), d) for d in onScreen])
+            pygame.display.update([self.toBiggie(d) for d in onScreen])
