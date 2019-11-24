@@ -63,14 +63,14 @@ class Game:
         screenRect = self.calcScreenRect()
         return Rect(rect.left, rect.top + screenRect.top, rect.right, rect.bottom + screenRect.top)
 
-    def toBiggie(self, rect):# translate a rect from bigSurface coordinates to
+    def fromBiggie(self, rect):# translate a rect from bigSurface coordinates to
         screenRect = self.calcScreenRect()
         return Rect(rect.left, rect.top - screenRect.top, rect.right, rect.bottom - screenRect.top)
 
     def translatePoint(self,tuple):# translate a point from screen coordinates to bigSurface coordinates
         return (tuple[0], tuple[1] + self.bigSurface.get_height()- self.screen.get_height() -self.screen_height)
 
-    def toBiggiePoint(self, tuple):# translate a rect from bigSurface coordinates to
+    def fromBiggiePoint(self, tuple):# translate a rect from bigSurface coordinates to
         screenRect = self.calcScreenRect()
         return (tuple[0], tuple[1] - (self.bigSurface.get_height()- self.screen.get_height() -self.screen_height))
 
@@ -111,7 +111,7 @@ class Game:
         print(x,y)
         print(length) #LENGTH IS OFF, FIX
 
-        new = ZippedBird(self, length,self.toBiggiePoint((x, y)))
+        new = ZippedBird(self, length,self.fromBiggiePoint((x, y)))
         self.tower.add(new)
         print(new.rect.size)
 
@@ -139,7 +139,7 @@ class Game:
         self.tower.add(base)
         self.allsprites.add(base)
         pos_y = min([each.rect.y for each in self.tower.sprites()]) - 50#self.tower.sprites()[0].bird_size[1]
-        moving = ZippedBird(self,length,self.toBiggiePoint((200, pos_y)))
+        moving = ZippedBird(self,length,self.fromBiggiePoint((200, pos_y)))
         while play:
             stopped = False
             #print(len(self.zipBird.sprites()))
@@ -189,6 +189,6 @@ class Game:
             onScreen = [d for d in dir if screenRect.contains(d)]# only blit the ones on screen
             if scrolling:
                 self.screen_height += self.scroll# move up screen
-                onScreen = [Rect(d.left, d.top - abs(self.scroll), d.right, d.bottom + abs(self.scroll)) for d in onScreen] # correct dirty rectangles
-            self.screen.blits([(self.bigSurface, self.toBiggie(d), d) for d in onScreen])
-            pygame.display.update([self.toBiggie(d) for d in onScreen])
+                onScreen = [Rect(d.left, d.top - abs(self.scroll)*2, d.right, d.bottom + abs(self.scroll)*2) for d in onScreen] # correct dirty rectangles
+            self.screen.blits([(self.bigSurface, self.fromBiggie(d), d) for d in onScreen])
+            pygame.display.update([self.fromBiggie(d) for d in onScreen])
