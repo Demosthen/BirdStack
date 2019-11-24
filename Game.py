@@ -42,13 +42,43 @@ class Game:
         self.clock = pygame.time.Clock()
         #TODO: initialize with ZippedBird base
         #TODO: add GUI BUTTONS (PLAY/PAUSE, SCORE, RESTART)
+        #TODO: actually make the zippedbird when you start the game
+        self.flock = ZippedBird(self, (100,100)) #TODO: please change this
     def calcScreenRect(self):
         return Rect(0, self.screen_height, self.screen.get_width(), self.screen_height+self.screen.get_height())
     def translateRect(self, rect):
         screenRect = self.calcScreenRect()
         return Rect(rect.left, rect.top + screenRect.top, rect.right, rect.bottom + screenRect.bottom)
+
+
+
     def place(self):#TODO:
         #YOUR CODE HERE
+        #check the position of the zipped bird, compare with the tower left and right bounds, resize+move to tower group, generate extra birds to toss if needed (and specials)
+        #check if there are special birds there that do stuff and do their effect
+        if abs(self.right_bound - self.flock.rect.right) <= self.tolerance): #move it over if within certain tolerance
+            self.flock.rect.move(self.right_bound - self.flock.rect.right, 0)
+        elif abs(self.left_bound - self.flock.rect.left) <= self.tolerance):
+            self.flock.rect.move(self.left_bound - self.flock.rect.left, 0)
+        self.flock.stationary = True
+
+        if (self.right_bound - self.flock.rect.right > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
+            for i in range((self.right_bound - self.flock.rect.right)//bird_width):
+                #TODO: make a murderedbird
+                #ALSO: check if there's a special in there so that you generate a dead one of those
+                pass
+        if (self.flock.rect.left - self.left_bound > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
+            for i in range((self.flock.rect.left - self.right_bound)//bird_width):
+                #TODO: make a murderedbird
+                pass
+
+        self.right_bound = self.flock.rect.right
+        self.left_bound = self.flock.rect.left
+        #TODO: move it to the tower group
+        #TODO: do specials
+        #TODO: check if gameEnded
+        #TODO: move screen up, then create new flock
+
         pass
 
     def gameEnded(self):#TODO:
