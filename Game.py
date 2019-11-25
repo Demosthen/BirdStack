@@ -5,6 +5,7 @@ from MurderedBird import *
 from Load import *
 from ZippedBird import *
 from CustomGroup import *
+from GuiSprites import *
 
 class Game:
     def __init__(self, screensize = (468,468)):
@@ -31,14 +32,17 @@ class Game:
         self.background = pygame.Surface(self.bigSurface.get_size())
         self.background = self.background.convert()
         self.background.fill((250,250,250))
-        if pygame.font:
-            font = pygame.font.Font(None, 36)
-            text = font.render("STACK THE BIRDSSSSSSSS", 1, (10, 10, 10))
-            textpos = text.get_rect(centerx=self.background.get_width()/2)
-            score = font.render("Score"+ str(self.score), True, (10, 10, 10))
-            scorepos = text.get_rect(topright = (100,100))#this is unfinished
-            self.background.blit(text, textpos)
         self.screen_height = 0
+        # if pygame.font:
+        #     font = pygame.font.Font(None, 36)
+        #     text = font.render("STACK THE BIRDSSSSSSSS", 1, (10, 10, 10))
+        #     textpos = text.get_rect()
+        #     textpos.center = self.translatePoint((self.screen.get_width()/2,10))
+        #     score = font.render("Score: "+ str(self.score), True, (10, 10, 10))
+        #     scorepos = score.get_rect()#this is unfinished
+        #     scorepos.topright = self.translatePoint((screensize[0]-25,25))
+        #     self.background.blit(text, textpos)
+            #self.background.blit(score, scorepos)
         self.bigSurface.blit(self.background, (0,0)) # TODO: pass area Rect to display only part of it
         self.screen.blit(self.bigSurface, (0,0), area = self.calcScreenRect())
         pygame.display.flip()
@@ -150,8 +154,16 @@ class Game:
         create a newZippedBird"""
 
 
-    def check_GUI(self): #pause/play, restart; sprites, will get added into allsprites
-        pass
+    def check_GUI(gui): #pause/play, restart; sprites, will get added into allsprites
+        if gui.type == "PAUSE":
+            gui.kill()
+            new = GuiSprites(self, "PLAY")
+        if gui.type == "PLAY":
+            gui.kill()
+            new = GuiSprites(self, "PAUSE")
+        #if gui.type == "RESTART":
+
+        #pass
 
     def endGame(self):#TODO: do the downward scroll, generate the dead bird pile, etc
         #YOUR CODE HERE
@@ -167,6 +179,10 @@ class Game:
         #self.allsprites.add(base)
         pos_y = min([each.rect.y for each in self.tower.sprites()]) -25#self.tower.sprites()[0].bird_size[1]
         moving = ZippedBird(self,length,self.fromBiggiePoint((self.screen.get_width()/2, pos_y)))
+        pause = GuiSprites(self,"PAUSE")
+        restart = GuiSprites(self,"RESTART")
+        title = GuiSprites(self,"TITLE")
+        score = GuiSprites(self,"SCORE")
         while play:
             stopped = False
             #print(len(self.zipBird.sprites()))
@@ -176,8 +192,9 @@ class Game:
                 #place, splice, drop here
                 #update screen accordingly
                 #check if game has ended
-            self.check_GUI()
-            cursor_pos = pygame.mouse.get_pos()
+            #self.check_GUI()
+            cursor_pos = self.translatePoint(pygame.mouse.get_pos())
+            print("cursor_pos", cursor_pos)
             #cursor_rect = Rect(cursor_pos[0]-1,cursor_pos[1]+1,2,2)
             for event in pygame.event.get():
                 if event.type == QUIT:
@@ -193,18 +210,18 @@ class Game:
                 #elif event.type == MOUSEBUTTONUP:
                     #for sprite in self.allsprites.sprites():
                         #sprite.dropping = True
-                elif event.type == MOUSEBUTTONDOWN and not any([each.collidepoint(cursor_pos) for each in self.gui.sprites()]):
+
+                elif event.type == MOUSEBUTTONDOWN and not any([each.rect.collidepoint(cursor_pos) for each in self.gui.sprites()]):
                     stopped = True
 
             if stopped:
                 if self.place():
                     self.endGame()
-                else:
-                    self.check_GUI()
 
 
 
 
+            #update score; code already above
             if scrolling:
                 self.screen_height += self.scroll
             self.allsprites.update()

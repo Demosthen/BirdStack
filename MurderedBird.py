@@ -13,7 +13,7 @@ class MurderedBird(pygame.sprite.Sprite):
 
         pygame.sprite.Sprite.__init__(self)
         self.groups = [game.allsprites,game.murdered]
-        self.image, self.rect = load_image('scooter.png', -1, self.bird_size)
+        self.image, self.rect = load_image('new_dead_birdie.png', -1, self.bird_size)
         screen = pygame.display.get_surface()
         #keep track of how many killed, how many types killed?
         self.game = game

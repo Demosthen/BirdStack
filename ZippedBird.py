@@ -7,11 +7,11 @@ import Game
 class ZippedBird(pygame.sprite.Sprite):
     move = 3
     bird_size = (50,50)
-    image_dict = {"BIRDIE": "scooter.png",
-                    "FATSO": "fatso.jpg",
-                    "SQUIDDY": "squid.jpg",
-                    "INVINCIBLE": "invincible.jpg",
-                    "TREE": "tree.png"}
+    image_dict = {"BIRDIE": "new_birdie.png",
+                    "FATSO": "new_fatso.png",
+                    "SQUIDDY": "new_squidbird.png",
+                    "INVINCIBLE": "new_invincible.png",
+                    "TREE": "new_tree.png"}
     need_append = {"BIRDIE": -1,# 1 if need to increase length, 0 if don't need to increase length
                     "FATSO": 1,
                     "SQUIDDY": 1,
@@ -188,10 +188,10 @@ class ZippedBird(pygame.sprite.Sprite):
         #YOUR CODE HERE
         imgs = [0,0]
         if self.bird_type == "BIRDIE":
-            img = Load.load_image('scooter.png', -1, (length,self.bird_size[1]))[0]
+            img = Load.load_image('new_birdie.png', -1, (length,self.bird_size[1]))[0]
             return img, img.get_rect()
         imgs[self.on_right] = Load.load_image(self.image_dict[self.bird_type], -1,self.bird_size)[0]
-        imgs[not self.on_right] = Load.load_image('scooter.png', -1, (length - self.bird_size[0] * (not self.need_append[self.bird_type]),self.bird_size[1]))[0]
+        imgs[not self.on_right] = Load.load_image('new_birdie.png', -1, (length - self.bird_size[0] * (not self.need_append[self.bird_type]),self.bird_size[1]))[0]
         return self.splice_image(imgs)
 
     def splice_image(self, imgs):#concatenates a list of images into one surface
