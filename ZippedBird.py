@@ -28,15 +28,15 @@ class ZippedBird(pygame.sprite.Sprite):
         self.game = game
         self.move_right = 1
         self.left_prob_dict = {"BIRDIE": 1,
-                        "FATSO": 1,
+                        "FATSO": 0,
                         "SQUIDDY": 0,
                         "INVINCIBLE": 0,
-                        "TREE": 0}
+                        "TREE": 4}
         self.right_prob_dict = {"BIRDIE": 1,
-                        "FATSO": 1,
+                        "FATSO": 0,
                         "SQUIDDY": 0,
                         "INVINCIBLE": 0,
-                        "TREE": 0}
+                        "TREE": 4}
         self.effect_dict = { "FATSO": self.apply_fatso,
                         "SQUIDDY": self.apply_squiddy,
                         "INVINCIBLE": self.apply_invincible,
@@ -214,9 +214,11 @@ class ZippedBird(pygame.sprite.Sprite):
         else:
             print('left')
             self.length_built = self.special_marker - self.rect.left
+        self.bird_type = "BIRDIE"
         self.length += self.length_built
-        self.image, self.rect = self.edit_image(self.length, True)
+        self.image,self.rect = self.edit_image(self.length, True)
         print("after pos:", self.rect.left, self.rect.right, self.length)
+        self.bird_type = "TREE"
 
 
     def edit_image(self, length, splicing = True):

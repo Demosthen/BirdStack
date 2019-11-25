@@ -143,12 +143,12 @@ class Game:
 
         if flock.bird_type != "BIRDIE": #apply special effect if it's not normal bird
             flock.apply_effect()
-            if flock.bird_type == "TREE":
+            if flock.bird_type == "TREE": #reposition the block so it doesn't get recentered but instead extended
                 if flock.on_right:
                     flock.relocate(self.fromBiggiePoint((x + flock.length_built/2,y)))
                 else:
                     flock.relocate(self.fromBiggiePoint((x - flock.length_built/2,y)))
-            if flock.bird_type == "FATSO":
+            if flock.bird_type == "FATSO": #reposition the block so it gets eaten on one side instead of recentered
                 print('relocate')
                 if flock.on_right:
                     flock.relocate(self.fromBiggiePoint((x - flock.length_eaten,y)))
@@ -163,12 +163,18 @@ class Game:
         if self.is_negative_length: #check if bird is eaten nom nom
             flock.kill()
             return "u suck u lose"
-
         flock.stationary = True
         self.tower.add(flock)
-
-        self.right_bound = min(right, self.right_bound) #resets left and right bounds
-        self.left_bound = max(left, self.left_bound)
+        if flock.bird_type == "TREE":
+            if flock.on_right:
+                self.right_bound = max(right, self.right_bound)
+                self.left_bound = max(left, self.left_bound)
+            else:
+                self.right_bound = min(right, self.right_bound)
+                self.left_bound = min(left, self.left_bound)
+        else:
+            self.right_bound = min(right, self.right_bound) #resets left and right bounds
+            self.left_bound = max(left, self.left_bound)
 
         screen_width = self.screen.get_width()
         left_spawn_edge = screen_width//5
