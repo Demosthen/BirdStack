@@ -6,6 +6,7 @@ from Load import *
 from ZippedBird import *
 from CustomGroup import *
 from GuiSprites import *
+import math
 import random
 
 class Game:
@@ -150,6 +151,9 @@ class Game:
         else:
             moving = ZippedBird(self,length,self.fromBiggiePoint((200, y-50)))
             moving.move *= 2*(random.random() >= 0.5)-1# multiply by 1 with probability 0.5, by -1 with probability 0.5
+        left_spawn_edge = math.ceil(moving.rect.width/2)
+        right_spawn_edge = screen_width - math.ceil(moving.rect.width/2)
+        moving.relocate(self.fromBiggiePoint((int(random.uniform(left_spawn_edge, right_spawn_edge)), y-50)))
         print("bird_type: ", moving.bird_type)
         print(len(self.tower.sprites()),len(self.murdered.sprites()), len(self.allsprites.sprites()) )
         self.turns += 1
