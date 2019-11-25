@@ -176,8 +176,9 @@ class Game:
     def endGame(self):#TODO: do the downward scroll, generate the dead bird pile, etc
         #YOUR CODE HERE
         for each in self.gui.sprites():
-            if each.type != "TITLE":
-                each.kill()
+            #if each.type != "TITLE":
+            each.kill()
+        score = GuiSprites(self,"SCORE")
         final_score = GuiSprites(self,"FINAL_SCORE")
         birds_killed = GuiSprites(self,"BIRDS_KILLED")
         final_restart = GuiSprites(self,"FINAL_RESTART")
