@@ -144,11 +144,11 @@ class Game:
         right_spawn_edge = 4*screen_width//5
         "handle apply_invincible"
         if self.invincible:
-            moving = ZippedBird(self,self.screen.get_with,self.fromBiggiePoint((200, y-50)))
+            moving = ZippedBird(self,screen_width,self.fromBiggiePoint((200, y-50)))
             self.invincible = False
             print(moving.length)
         else:
-            moving = ZippedBird(self,length,self.fromBiggiePoint((random.uniform(left_spawn_edge, right_spawn_edge), y-50)))
+            moving = ZippedBird(self,length,self.fromBiggiePoint((200, y-50)))
             moving.move *= 2*(random.random() >= 0.5)-1# multiply by 1 with probability 0.5, by -1 with probability 0.5
         print("bird_type: ", moving.bird_type)
         print(len(self.tower.sprites()),len(self.murdered.sprites()), len(self.allsprites.sprites()) )
