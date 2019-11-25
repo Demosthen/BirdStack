@@ -213,6 +213,11 @@ class Game:
         for each in self.gui.sprites():
             #if each.type != "TITLE":
             each.kill()
+        for bird_type, num in self.murders.items():
+            for i in range(num):
+                MurderedBird(self, (int(random.uniform(0, self.screen.get_width())), 0),bird_type, True)
+        self.scroll = -self.auto_scroll*2
+        self.scroll_dur = 1000000
         title = GuiSprites(self,"TITLE")
         final_score = GuiSprites(self,"FINAL_SCORE")
         birds_killed = GuiSprites(self,"BIRDS_KILLED")
