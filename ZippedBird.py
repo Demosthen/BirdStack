@@ -8,6 +8,7 @@ from SquidInk import *
 
 class ZippedBird(pygame.sprite.Sprite):
     move = 3
+    orig_move = 3
     bird_size = (50,50)
     image_dict = {"BIRDIE": "new_birdie.png",
                     "FATSO": "new_fatso.png",
@@ -25,17 +26,17 @@ class ZippedBird(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.length = length
         self.game = game
-
-        self.left_prob_dict = {"BIRDIE": 1,
-                        "FATSO": 0,
-                        "SQUIDDY": 0,
-                        "INVINCIBLE": 0,
+        self.move_right  = 1 # 1 if right, -1 if left
+        self.left_prob_dict = {"BIRDIE": 3,
+                        "FATSO": 1,
+                        "SQUIDDY": 1,
+                        "INVINCIBLE": 1,
                         "TREE": 1}
-        self.right_prob_dict = {"BIRDIE": 0,
-                        "FATSO": 0,
-                        "SQUIDDY": 0,
-                        "INVINCIBLE": 0,
-                        "TREE": 0}
+        self.right_prob_dict = {"BIRDIE": 3,
+                        "FATSO": 1,
+                        "SQUIDDY": 1,
+                        "INVINCIBLE": 1,
+                        "TREE": 1}
         self.effect_dict = { "FATSO": self.apply_fatso,
                         "SQUIDDY": self.apply_squiddy,
                         "INVINCIBLE": self.apply_invincible,
@@ -153,18 +154,13 @@ class ZippedBird(pygame.sprite.Sprite):
 
     def fly(self):
         """move the bird across the screen, and bounce at the ends"""
-        newpos = self.rect.move((self.move, 0))
+        newpos = self.rect.move((self.move * self.move_right, 0))
         if not self.area.contains(newpos):
             if self.rect.left < self.area.left or \
                     self.rect.right > self.area.right:
-                self.move = -self.move
-                newpos = self.rect.move((self.move, 0))
+                self.move_right = - self.move_right
+                newpos = self.rect.move((self.move * self.move_right, 0))
         self.rect = newpos
-
-    def load_spliced_image(self, bird, length):#TODO: bird is a string, length is length of image
-        #YOUR CODE HERE
-        return Load.load_image(bird)
-
 
     def apply_effect(self):
         self.special_marker = self.rect.right - self.bird_size[0] if self.on_right else self.rect.left + self.bird_size[0] #position of the end of special bird block
@@ -236,10 +232,13 @@ class ZippedBird(pygame.sprite.Sprite):
     def make_long_img(self, img, length):
         num_imgs = length // img.get_width()
         leftover = int(length % img.get_width())
-        full_list = [img] * num_imgs
+        full_list = []
+        for i in range(num_imgs):
+            full_list.append(img)
         if leftover > 0:
             leftoverSurf = pygame.Surface(img.get_size())
             leftoverSurf.blit(img, (0,0))
-            pygame.transform.scale(leftoverSurf, (leftover, img.get_height()))
+            leftoverSurf = pygame.transform.scale(leftoverSurf, (leftover, img.get_height()))
+            print(leftoverSurf.get_size())
             full_list.append(leftoverSurf)
         return self.splice_image(full_list)

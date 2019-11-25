@@ -14,11 +14,11 @@ class MurderedBird(pygame.sprite.Sprite):
                     "TREE": "new_tree.png"}
 
 
-    def __init__(self, game, startPos):
+    def __init__(self, game, startPos, type):
         #need add type
         pygame.sprite.Sprite.__init__(self)
         self.groups = [game.allsprites,game.murdered]
-        self.image, self.rect = load_image('new_dead_birdie.png', -1, self.bird_size)
+        self.image, self.rect = load_image(self.image_dict[type], -1, self.bird_size)
         screen = pygame.display.get_surface()
         self.final_drawn = False
         #keep track of how many killed, how many types killed?
