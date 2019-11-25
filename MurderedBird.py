@@ -16,9 +16,10 @@ class MurderedBird(pygame.sprite.Sprite):
                     "TREE": "new_dead_tree.png"}
 
 
-    def __init__(self, game, startPos, type):
+    def __init__(self, game, startPos, type, to_b_or_not_2_b = False):
         #need add type
         pygame.sprite.Sprite.__init__(self)
+        self.to_b_or_not_2_b = to_b_or_not_2_b
         self.groups = [game.allsprites,game.murdered]
         self.image, self.rect = load_image(self.image_dict[type], -1, self.bird_size)
         screen = pygame.display.get_surface()
@@ -40,13 +41,14 @@ class MurderedBird(pygame.sprite.Sprite):
     def update(self):
         global numb_killed
         self.rect.center = self.body.position
-        area = self.game.calcScreenRect()
-        if self.rect.top >= area.bottom:
-            numb_killed+=1
-            print("DEAD!", numb_killed)
-            self.game.space.remove(self.shape, self.body)
-            self.kill()
-            del self
+        if not self.to_b_or_not_2_b:
+            area = self.game.calcScreenRect()
+            if self.rect.top >= area.bottom:
+                numb_killed+=1
+                print("DEAD!", numb_killed)
+                self.game.space.remove(self.shape, self.body)
+                self.kill()
+                del self
         #self.drop()
 
 
