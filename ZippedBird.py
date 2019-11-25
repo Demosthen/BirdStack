@@ -27,14 +27,14 @@ class ZippedBird(pygame.sprite.Sprite):
         self.game = game
 
         self.left_prob_dict = {"BIRDIE": 3,
-                        "FATSO": 0,
-                        "SQUIDDY": 0,
-                        "INVINCIBLE": 0,
+                        "FATSO": 1,
+                        "SQUIDDY": 1,
+                        "INVINCIBLE": 1,
                         "TREE": 1}
         self.right_prob_dict = {"BIRDIE": 3,
-                        "FATSO": 0,
-                        "SQUIDDY": 0,
-                        "INVINCIBLE": 0,
+                        "FATSO": 1,
+                        "SQUIDDY": 1,
+                        "INVINCIBLE": 1,
                         "TREE": 1}
         self.effect_dict = { "FATSO": self.apply_fatso,
                         "SQUIDDY": self.apply_squiddy,
