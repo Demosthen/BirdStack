@@ -213,12 +213,12 @@ class ZippedBird(pygame.sprite.Sprite):
     def edit_image(self, length, splicing = True):
         #YOUR CODE HERE
         imgs = [0,0]
-        print(length)
         if self.bird_type == "BIRDIE":
-            img = Load.load_image('new_birdie.png', -1, (length,self.bird_size[1]))[0]
+            img = self.make_long_img(Load.load_image("new_birdie.png", -1, self.bird_size)[0], length)[0]
             return img, img.get_rect()
         imgs[self.on_right] = Load.load_image(self.image_dict[self.bird_type], -1,self.bird_size)[0]
-        imgs[not self.on_right] = Load.load_image('new_birdie.png', -1, (length - self.bird_size[0] * (not self.need_append[self.bird_type]),self.bird_size[1]))[0]
+        #imgs[not self.on_right] = Load.load_image('new_birdie.png', -1, (length - self.bird_size[0] * (not self.need_append[self.bird_type]),self.bird_size[1]))[0]
+        imgs[not self.on_right] = self.make_long_img(Load.load_image("new_birdie.png", -1, self.bird_size)[0], (length - self.bird_size[0] * (not self.need_append[self.bird_type])))[0]
         return self.splice_image(imgs)
 
     def splice_image(self, imgs):#concatenates a list of images into one surface
@@ -230,3 +230,14 @@ class ZippedBird(pygame.sprite.Sprite):
             new_img.blit(i, (pos, 0))
             pos += i.get_width()
         return new_img, new_img.get_rect()
+
+    def make_long_img(self, img, length):
+        num_imgs = length // img.get_width()
+        leftover = int(length % img.get_width())
+        full_list = [img] * num_imgs
+        if leftover > 0:
+            leftoverSurf = pygame.Surface(img.get_size())
+            leftoverSurf.blit(img, (0,0))
+            pygame.transform.scale(leftoverSurf, (leftover, img.get_height()))
+            full_list.append(leftoverSurf)
+        return self.splice_image(full_list)
