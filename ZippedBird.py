@@ -26,16 +26,16 @@ class ZippedBird(pygame.sprite.Sprite):
         self.length = length
         self.game = game
 
-        self.left_prob_dict = {"BIRDIE": 3,
+        self.left_prob_dict = {"BIRDIE": 1,
                         "FATSO": 0,
                         "SQUIDDY": 0,
                         "INVINCIBLE": 0,
                         "TREE": 1}
-        self.right_prob_dict = {"BIRDIE": 3,
+        self.right_prob_dict = {"BIRDIE": 0,
                         "FATSO": 0,
                         "SQUIDDY": 0,
                         "INVINCIBLE": 0,
-                        "TREE": 1}
+                        "TREE": 0}
         self.effect_dict = { "FATSO": self.apply_fatso,
                         "SQUIDDY": self.apply_squiddy,
                         "INVINCIBLE": self.apply_invincible,
@@ -116,6 +116,7 @@ class ZippedBird(pygame.sprite.Sprite):
 
     def updateLeftProb(self): #TREE, FATSO,INVINCIBLE, SQUIDDY
         #YOUR CODE HERE
+        self.left_prob_dict["BIRDIE"]+=0.1
         if self.game.left_bound<50:
             self.left_prob_dict["TREE"] = 0
             self.left_prob_dict["FATSO"]+= 0.25
@@ -132,6 +133,7 @@ class ZippedBird(pygame.sprite.Sprite):
 
     def updateRightProb(self):
         #YOUR CODE HERE
+        self.left_prob_dict["BIRDIE"]+=0.1
         if self.game.right_bound>400:
             self.right_prob_dict["TREE"] = 0
             self.right_prob_dict["FATSO"]+= 0.25
