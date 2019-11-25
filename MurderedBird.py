@@ -3,7 +3,7 @@ from Load import *
 import Game
 
 numb_killed = 0
-GRAVITY = 3
+GRAVITY = 1
 class MurderedBird(pygame.sprite.Sprite):
     move = 3
     bird_size = (50,50)
@@ -25,7 +25,6 @@ class MurderedBird(pygame.sprite.Sprite):
             each.add(self)
 
     def update(self):
-        self.onScreen = self.game.checkPointOnScreen(self.rect.topleft)
         self.drop()
 
     def fly(self):
@@ -46,7 +45,7 @@ class MurderedBird(pygame.sprite.Sprite):
         newpos = self.rect.move((0, GRAVITY))
         self.rect = newpos
         area = self.game.calcScreenRect()
-        if self.rect.top >= area.height:
+        if self.rect.top >= area.bottom:
             numb_killed+=1
             print("DEAD!", numb_killed)
             self.kill()
