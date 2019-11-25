@@ -195,7 +195,7 @@ class Game:
         for each in self.gui.sprites():
             #if each.type != "TITLE":
             each.kill()
-        score = GuiSprites(self,"SCORE")
+        title = GuiSprites(self,"TITLE")
         final_score = GuiSprites(self,"FINAL_SCORE")
         birds_killed = GuiSprites(self,"BIRDS_KILLED")
         final_restart = GuiSprites(self,"FINAL_RESTART")
