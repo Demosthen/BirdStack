@@ -15,14 +15,17 @@ class MurderedBird(pygame.sprite.Sprite):
         self.groups = [game.allsprites,game.murdered]
         self.image, self.rect = load_image('new_dead_birdie.png', -1, self.bird_size)
         screen = pygame.display.get_surface()
+        self.final_drawn = False
         #keep track of how many killed, how many types killed?
         self.game = game
         self.rect.center = self.game.translatePoint(startPos)
         self.area = screen.get_rect()
+        self.onScreen = True
         for each in self.groups:
             each.add(self)
 
     def update(self):
+        self.onScreen = self.game.checkPointOnScreen(self.rect.topleft)
         self.drop()
 
     def fly(self):

@@ -47,30 +47,33 @@ class Game:
         self.screen.blit(self.bigSurface, (0,0), area = self.calcScreenRect())
         pygame.display.flip()
         self.tolerance = 10# TODO: ADJUST LATER
-        self.allsprites = pygame.sprite.RenderUpdates()
-        self.murdered = pygame.sprite.RenderUpdates()
-        self.tower = CustomGroup()
+        self.allsprites = CustomGroup(self)
+        self.murdered = CustomGroup(self)
+        self.tower = CustomGroup(self)
         self.zipBird = pygame.sprite.GroupSingle()
-        self.gui = pygame.sprite.RenderUpdates()
+        self.gui = CustomGroup(self)
         self.clock = pygame.time.Clock()
+        self.is_negative_length = False
+        self.final_drawn = False
         self.scroll = 5 # amount it scrolls each frame
         #self.squiddy_time = 1500
         self.turns = 0
+        self.invincible = False
         #TODO: initialize with ZippedBird base
         #TODO: add GUI BUTTONS (PLAY/PAUSE, SCORE, RESTART)
         #TODO: actually make the zippedbird when you start the game
         #self.flock = ZippedBird(self, (100,100)) #TODO: please change this
 
     def calcScreenRect(self):# calculate the screen's rect within bigSurface
-        return Rect(0, self.bigSurface.get_height()- self.screen.get_height() -self.screen_height, self.screen.get_width(), self.bigSurface.get_height() - self.screen_height)
+        return Rect(0, self.bigSurface.get_height()- self.screen.get_height() -self.screen_height, self.screen.get_width(), self.screen.get_height())
 
     def translateRect(self, rect):#translate a rect from screen coordinates to bigSurface coordinates
         screenRect = self.calcScreenRect()
-        return Rect(rect.left, rect.top + screenRect.top, rect.right, rect.bottom + screenRect.top)
+        return Rect(rect.left, rect.top + screenRect.top, rect.width, rect.height)
 
     def fromBiggie(self, rect):# translate a rect from bigSurface coordinates to
         screenRect = self.calcScreenRect()
-        return Rect(rect.left, rect.top - screenRect.top, rect.right, rect.bottom - screenRect.top)
+        return Rect(rect.left, rect.top - screenRect.top, rect.width, rect.height)
 
     def translatePoint(self,tuple):# translate a point from screen coordinates to bigSurface coordinates
         return (tuple[0], tuple[1] + self.bigSurface.get_height()- self.screen.get_height() -self.screen_height)
@@ -79,6 +82,9 @@ class Game:
         screenRect = self.calcScreenRect()
         return (tuple[0], tuple[1] - (self.bigSurface.get_height()- self.screen.get_height() -self.screen_height))
 
+    def checkPointOnScreen(self, pt):
+        screenRect = self.calcScreenRect()
+        return pt[1] < screenRect.bottom
 
     def place(self):#TODO:
         #YOUR CODE HERE
@@ -119,32 +125,43 @@ class Game:
                 #pygame.time.wait(100)
 
         length = min(right, self.right_bound) - max(left, self.left_bound) #resize
-        if length<5:
-            flock.kill()
-            return "u suck u lose"
-        #TODO: do special effects
 
+        #FIX MUDRDERED BIRDS
+        # if (self.right_bound - flock.rect.right > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
+        #     for i in range((self.right_bound - flock.rect.right)//bird_width):
+        #         self.murdered.add(MurderedBird(self,(flock.rect.right - bird_width*i, flock.rect.y)))
+        #         #TODO: check if there's a special in there so that you generate a dead one of those
+        #
+        # if (flock.rect.left - self.left_bound > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
+        #     for i in range((flock.rect.left - self.right_bound)//bird_width):
+        #         self.murdered.add(MurderedBird(self,(flock.rect.left + bird_width*i, flock.rect.y)))
+
+        print("placed:", flock.bird_type)
         flock.place(self.left_bound, self.right_bound, length)
+        if flock.bird_type != "BIRDIE": #apply special effect if it's not normal bird
+            flock.apply_effect()
+        length = flock.length
         flock.relocate(self.fromBiggiePoint((x,y)))
         flock.stationary = True
         self.tower.add(flock)
 
         self.right_bound = min(right, self.right_bound) #resets left and right bounds
         self.left_bound = max(left, self.left_bound)
+        if length < 5 or self.is_negative_length:
+            flock.kill()
+            return "u suck u lose"
 
-        #self.towerSprites.add(self.flock)
-        #flock.kill()
-        #print(x,y)
-        #print(length) #LENGTH IS OFF, FIX
-
-        #new = ZippedBird(self, length,self.fromBiggiePoint((x, y)))
-        #new.stationary = True
-        #self.tower.add(new)
-
-
-        moving = ZippedBird(self,length,self.fromBiggiePoint((200, y-50)))
+        "handle apply_invincible"
+        if self.invincible:
+            moving = ZippedBird(self,468,self.fromBiggiePoint((200, y-50)))
+            self.invincible = False
+            print(moving.length)
+        else:
+            moving = ZippedBird(self,length,self.fromBiggiePoint((200, y-50)))
+        print("bird_type: ", moving.bird_type)
         print(len(self.tower.sprites()),len(self.murdered.sprites()), len(self.allsprites.sprites()) )
         self.turns += 1
+        print("turn: ", self.turns)
 
 
     """if (some key down):
@@ -224,13 +241,14 @@ class Game:
             #update score; code already above
             if scrolling:
                 self.screen_height += self.scroll
+                print(self.calcScreenRect())
             self.allsprites.update()
             #self.bigSurface.blit(self.background, self.calcScreenRect()) # TODO: pass area Rect to display only part of it
-            self.allsprites.clear(self.bigSurface,self.background)
+            cleared = self.allsprites.clear(self.bigSurface,self.background)
             dir = self.allsprites.draw(self.bigSurface) #TODO: ONLY DRAW ONES ONSCREEN BY SUBCLASSING GROUP
             # TODO: draw to bigsurface, not screen
             screenRect = self.calcScreenRect()
-            onScreen = [d for d in dir if screenRect.contains(d)]# only blit the ones on screen
+            onScreen = [d for d in dir if screenRect.contains(d)] + cleared# only blit the ones on screen
             if scrolling:
                 #self.screen_height += self.scroll# move up screen
                 onScreen = [Rect(d.left - abs(self.scroll)*2, d.top - abs(self.scroll)*2, d.right+ abs(self.scroll)*2, d.bottom + abs(self.scroll)*2) for d in onScreen] # correct dirty rectangles
