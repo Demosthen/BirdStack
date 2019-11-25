@@ -28,15 +28,15 @@ class ZippedBird(pygame.sprite.Sprite):
         self.game = game
         self.move_right = 1
         self.left_prob_dict = {"BIRDIE": 1,
-                        "FATSO": 0,
-                        "SQUIDDY": 0,
-                        "INVINCIBLE": 0,
-                        "TREE": 4}
+                        "FATSO": 1,
+                        "SQUIDDY": 1,
+                        "INVINCIBLE": 4,
+                        "TREE": 1}
         self.right_prob_dict = {"BIRDIE": 1,
-                        "FATSO": 0,
-                        "SQUIDDY": 0,
-                        "INVINCIBLE": 0,
-                        "TREE": 4}
+                        "FATSO": 1,
+                        "SQUIDDY": 1,
+                        "INVINCIBLE": 4,
+                        "TREE": 1}
         self.effect_dict = { "FATSO": self.apply_fatso,
                         "SQUIDDY": self.apply_squiddy,
                         "INVINCIBLE": self.apply_invincible,
@@ -105,6 +105,8 @@ class ZippedBird(pygame.sprite.Sprite):
         self.rect.center = self.game.translatePoint(newLoc)
 
     def getSpecial(self):
+        if self.game.invincible:
+            return "BIRDIE", True
         on_right = random.random() >= 0.5
         probs = self.right_prob_dict if on_right else self.left_prob_dict
         total = sum(probs.values())

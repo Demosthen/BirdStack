@@ -155,17 +155,18 @@ class Game:
                 else:
                     flock.relocate(self.fromBiggiePoint((x + flock.length_eaten,y)))
 
-        print('finished applying')
         left = flock.rect.left
         right = flock.rect.right
         length = right - left
-        print('checking new bounds:', flock.rect.left, flock.rect.right)
+
         if self.is_negative_length: #check if bird is eaten nom nom
             flock.kill()
             return "u suck u lose"
+
         flock.stationary = True
         self.tower.add(flock)
-        if flock.bird_type == "TREE":
+
+        if flock.bird_type == "TREE": #corrects and adjusts for the additional extended block if TREE bird
             if flock.on_right:
                 self.right_bound = max(right, self.right_bound)
                 self.left_bound = max(left, self.left_bound)
