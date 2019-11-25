@@ -8,10 +8,10 @@ class MurderedBird(pygame.sprite.Sprite):
     move = 3
     bird_size = (50,50)
     image_dict = {"BIRDIE": "new_dead_birdie.png",
-                    "FATSO": "new_fatso.png",
-                    "SQUIDDY": "new_squidbird.png",
-                    "INVINCIBLE": "new_invincible.png",
-                    "TREE": "new_tree.png"}
+                    "FATSO": "new_dead_fatso.png",
+                    "SQUIDDY": "new_dead_squidbird.png",
+                    "INVINCIBLE": "new_dead_invincible.png",
+                    "TREE": "new_dead_tree.png"}
 
 
     def __init__(self, game, startPos, type):

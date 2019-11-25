@@ -252,7 +252,7 @@ class Game:
                     #for sprite in self.allsprites.sprites():
                         #sprite.dropping = True
 
-                elif event.type == MOUSEBUTTONDOWN and not any(pointers) and len(self.zipBird.sprites()): #there is no "play" sprite
+                elif event.type == KEYUP and event.key == K_SPACE and len(self.zipBird.sprites()): 
                     stopped = True
                 elif event.type == MOUSEBUTTONDOWN and any(pointers):
                     x = self.gui.sprites()[pointers.index(1)]
