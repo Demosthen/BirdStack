@@ -205,7 +205,7 @@ class ZippedBird(pygame.sprite.Sprite):
         ink = SquidInk(self.game, self.ink_turn)
         ink.update()
 
-    def apply_invincible(self): #TODO: make a long block
+    def apply_invincible(self):\
         self.game.invincible = True
 
     def apply_tree(self):
