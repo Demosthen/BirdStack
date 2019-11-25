@@ -103,11 +103,13 @@ class Game:
             for i in range(round((right - self.right_bound)/bird_width)):
                 print(i)
                 self.murdered.add(MurderedBird(self,self.fromBiggiePoint((right+20*(i+1), flock.rect.y))))
+                self.murders["BIRDIE"]+=1
                 #TODO: check if there's a special in there so that you generate a dead one of those
         if (self.left_bound - left > 0.2*bird_width): #change to whatever fraction of the thing counts as a bird
             for i in range(round((self.left_bound - left)//bird_width)):
                 print(i)
                 self.murdered.add(MurderedBird(self,self.fromBiggiePoint((left-+20*(i+1), flock.rect.y))))
+                self.murders["BIRDIE"]+=1
 
 
     def place(self):#TODO:
@@ -175,6 +177,9 @@ class Game:
             self.paused = False
         if gui.type == "RESTART":
             return "RESTART"
+        if gui.type == "FINAL_RESTART":
+            return "RESTART"
+
 
         #pass
 
@@ -183,9 +188,11 @@ class Game:
         for each in self.gui.sprites():
             if each.type != "TITLE":
                 each.kill()
-
-
-        pass
+        final_score = GuiSprites(self,"FINAL_SCORE")
+        birds_killed = GuiSprites(self,"BIRDS_KILLED")
+        final_restart = GuiSprites(self,"FINAL_RESTART")
+        thanks = GuiSprites(self,"THANKS")
+        credits =GuiSprites(self,"CREDITS")
 
     def run(self):
         length = self.right_bound-self.left_bound
