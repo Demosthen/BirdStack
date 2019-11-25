@@ -26,16 +26,16 @@ class ZippedBird(pygame.sprite.Sprite):
         self.length = length
         self.game = game
 
-        self.left_prob_dict = {"BIRDIE": 1,
+        self.left_prob_dict = {"BIRDIE": 3,
                         "FATSO": 0,
                         "SQUIDDY": 0,
-                        "INVINCIBLE": 1,
-                        "TREE": 0}
-        self.right_prob_dict = {"BIRDIE": 1,
+                        "INVINCIBLE": 0,
+                        "TREE": 1}
+        self.right_prob_dict = {"BIRDIE": 3,
                         "FATSO": 0,
                         "SQUIDDY": 0,
-                        "INVINCIBLE": 1,
-                        "TREE": 0}
+                        "INVINCIBLE": 0,
+                        "TREE": 1}
         self.effect_dict = { "FATSO": self.apply_fatso,
                         "SQUIDDY": self.apply_squiddy,
                         "INVINCIBLE": self.apply_invincible,
@@ -114,8 +114,17 @@ class ZippedBird(pygame.sprite.Sprite):
 
     """
 
-    def updateLeftProb(self):
+    def updateLeftProb(self): #TREE, FATSO,INVINCIBLE, SQUIDDY
         #YOUR CODE HERE
+        if self.game.left_bound<50:
+            self.left_prob_dict["TREE"] = 0
+            self.left_prob_dict["FATSO"]+= 0.25
+        if self.game.right_bound - self.game.left_bound > 100:
+            self.left_prob_dict["SQUIDDY"]+=0.25
+        else:
+            self.left_prob_dict["SQUIDDY"]-=0.25
+            self.left_prob_dict["INVINCIBLE"]+=0.25
+
         if self.game.right_bound - self.game.left_bound < self.bird_size[0]:
             for key, val in self.need_append.items():
                 if val == 0:
@@ -123,6 +132,16 @@ class ZippedBird(pygame.sprite.Sprite):
 
     def updateRightProb(self):
         #YOUR CODE HERE
+        if self.game.right_bound>400:
+            self.right_prob_dict["TREE"] = 0
+            self.right_prob_dict["FATSO"]+= 0.25
+        if self.game.right_bound - self.game.left_bound > 100:
+            self.right_prob_dict["SQUIDDY"]+=0.25
+        else:
+            self.right_prob_dict["SQUIDDY"]-=0.25
+            self.right_prob_dict["INVINCIBLE"]+=0.25
+
+
         if self.game.right_bound - self.game.left_bound < self.bird_size[0]:
             for key, val in self.need_append.items():
                 if val == 0:
