@@ -26,7 +26,7 @@ class ZippedBird(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.length = length
         self.game = game
-
+        self.move_right = 1
         self.left_prob_dict = {"BIRDIE": 10,
                         "FATSO": 2.5,
                         "SQUIDDY": 1.5,
@@ -43,6 +43,17 @@ class ZippedBird(pygame.sprite.Sprite):
                         "TREE": self.apply_tree}
         self.updateLeftProb()
         self.updateRightProb()
+        if len(game.tower.sprites()) == 0:
+            for key,val in self.left_prob_dict.items():
+                if key == 'BIRDIE':
+                    self.left_prob_dict[key] = 1
+                else:
+                    self.left_prob_dict[key] = 0
+            for key,val in self.right_prob_dict.items():
+                if key == 'BIRDIE':
+                    self.right_prob_dict[key] = 1
+                else:
+                    self.right_prob_dict[key] = 0
         self.groups = [game.zipBird, game.allsprites]
         for each in self.groups:
             each.add(self)
