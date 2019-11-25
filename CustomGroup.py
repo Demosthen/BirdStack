@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 from SquidInk import *
+from GuiSprites import *
 #this i tower
 class CustomGroup(pygame.sprite.RenderUpdates):#TODO: ALL OF IT
     def __init__(self, game):
@@ -37,10 +38,13 @@ class CustomGroup(pygame.sprite.RenderUpdates):#TODO: ALL OF IT
                dirty_append(newrect)
            spritedict[s] = newrect
        for s in self.sprites():
-           if type(s) != SquidInk:
+           if type(s) != SquidInk and type(s) != GuiSprites:
                draw_sprite(s)
-       for s in self.sprites():#draw squidink sprites last
+       for s in self.sprites():#draw squidink sprites after other things
            if type(s) == SquidInk:
+               draw_sprite(s)
+       for s in self.sprites():#draw gui last
+           if type(s) == GuiSprites:
                draw_sprite(s)
        return dirty
 

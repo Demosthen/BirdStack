@@ -15,6 +15,7 @@ class SquidInk(pygame.sprite.Sprite):
         self.initial_round = self.game.turns
         self.rounds = rounds
         game.allsprites.add(self)
+        game.gui.add(self)
         screen = pygame.display.get_surface()
         self.startPos = startPos
         self.rect.center = self.game.translatePoint(startPos)

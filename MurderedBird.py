@@ -40,7 +40,6 @@ class MurderedBird(pygame.sprite.Sprite):
     def update(self):
         global numb_killed
         self.rect.center = self.body.position
-        print(self.rect.center)
         area = self.game.calcScreenRect()
         if self.rect.top >= area.bottom:
             numb_killed+=1
