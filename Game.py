@@ -133,17 +133,37 @@ class Game:
         y = flock.rect.centery
         self.murderBirds(right, left, flock)
         length = min(right, self.right_bound) - max(left, self.left_bound) #resize
+        if length < 5:
+            flock.kill()
+            return "u suck u lose"
+        print("placed:", flock.bird_type)
 
-        if length < 5 or self.is_negative_length:
+        flock.place(self.left_bound, self.right_bound, length)
+        flock.relocate(self.fromBiggiePoint((x,y)))
+
+        if flock.bird_type != "BIRDIE": #apply special effect if it's not normal bird
+            flock.apply_effect()
+            if flock.bird_type == "TREE":
+                if flock.on_right:
+                    flock.relocate(self.fromBiggiePoint((x + flock.length_built/2,y)))
+                else:
+                    flock.relocate(self.fromBiggiePoint((x - flock.length_built/2,y)))
+            if flock.bird_type == "FATSO":
+                print('relocate')
+                if flock.on_right:
+                    flock.relocate(self.fromBiggiePoint((x - flock.length_eaten,y)))
+                else:
+                    flock.relocate(self.fromBiggiePoint((x + flock.length_eaten,y)))
+
+        print('finished applying')
+        left = flock.rect.left
+        right = flock.rect.right
+        length = right - left
+        print('checking new bounds:', flock.rect.left, flock.rect.right)
+        if self.is_negative_length: #check if bird is eaten nom nom
             flock.kill()
             return "u suck u lose"
 
-        print("placed:", flock.bird_type)
-        flock.place(self.left_bound, self.right_bound, length)
-        if flock.bird_type != "BIRDIE": #apply special effect if it's not normal bird
-            flock.apply_effect()
-        length = flock.length
-        flock.relocate(self.fromBiggiePoint((x,y)))
         flock.stationary = True
         self.tower.add(flock)
 
