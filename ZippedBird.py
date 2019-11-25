@@ -48,19 +48,24 @@ class ZippedBird(pygame.sprite.Sprite):
         #use getSpecial() to determine if you're going to have a special bird
         self.bird_type, self.on_right = self.getSpecial()
         self.image, self.rect = self.edit_image( self.length, False)
+        print(self.rect.height)
         screen = pygame.display.get_surface()
         self.stationary = False
         self.rect.center = self.game.translatePoint(startPos)
         self.ink_turn = 3
         self.margin = 25
+        self.final_drawn = False
         self.area = screen.get_rect() # TODO: UPDATE THIS ACCORDING TO GAME SCREEN POSITION
+        self.onScreen = True
         #splice images and do stuff
         #actually make the thing show up
 
     def update(self):
         #CHECK COORDINATES to see if you need to draw it
+        self.onScreen = self.game.checkPointOnScreen(self.rect.topleft)
         if not self.stationary:
             self.fly()
+
 
     def place(self, left_bound, right_bound, length):
         if self.bird_type != 'BIRDIE':

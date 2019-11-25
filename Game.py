@@ -43,13 +43,14 @@ class Game:
         self.screen.blit(self.bigSurface, (0,0), area = self.calcScreenRect())
         pygame.display.flip()
         self.tolerance = 10# TODO: ADJUST LATER
-        self.allsprites = pygame.sprite.RenderUpdates()
-        self.murdered = pygame.sprite.RenderUpdates()
-        self.tower = CustomGroup()
+        self.allsprites = CustomGroup(self)
+        self.murdered = CustomGroup(self)
+        self.tower = CustomGroup(self)
         self.zipBird = pygame.sprite.GroupSingle()
-        self.gui = pygame.sprite.RenderUpdates()
+        self.gui = CustomGroup(self)
         self.clock = pygame.time.Clock()
         self.is_negative_length = False
+        self.final_drawn = False
         self.scroll = 5 # amount it scrolls each frame
         #self.squiddy_time = 1500
         self.turns = 0
@@ -60,15 +61,15 @@ class Game:
         #self.flock = ZippedBird(self, (100,100)) #TODO: please change this
 
     def calcScreenRect(self):# calculate the screen's rect within bigSurface
-        return Rect(0, self.bigSurface.get_height()- self.screen.get_height() -self.screen_height, self.screen.get_width(), self.bigSurface.get_height() - self.screen_height)
+        return Rect(0, self.bigSurface.get_height()- self.screen.get_height() -self.screen_height, self.screen.get_width(), self.screen.get_height())
 
     def translateRect(self, rect):#translate a rect from screen coordinates to bigSurface coordinates
         screenRect = self.calcScreenRect()
-        return Rect(rect.left, rect.top + screenRect.top, rect.right, rect.bottom + screenRect.top)
+        return Rect(rect.left, rect.top + screenRect.top, rect.width, rect.height)
 
     def fromBiggie(self, rect):# translate a rect from bigSurface coordinates to
         screenRect = self.calcScreenRect()
-        return Rect(rect.left, rect.top - screenRect.top, rect.right, rect.bottom - screenRect.top)
+        return Rect(rect.left, rect.top - screenRect.top, rect.width, rect.height)
 
     def translatePoint(self,tuple):# translate a point from screen coordinates to bigSurface coordinates
         return (tuple[0], tuple[1] + self.bigSurface.get_height()- self.screen.get_height() -self.screen_height)
@@ -77,6 +78,9 @@ class Game:
         screenRect = self.calcScreenRect()
         return (tuple[0], tuple[1] - (self.bigSurface.get_height()- self.screen.get_height() -self.screen_height))
 
+    def checkPointOnScreen(self, pt):
+        screenRect = self.calcScreenRect()
+        return pt[1] < screenRect.bottom
 
     def place(self):#TODO:
         #YOUR CODE HERE
@@ -142,14 +146,6 @@ class Game:
         if length < 5 or self.is_negative_length:
             flock.kill()
             return "u suck u lose"
-        #self.towerSprites.add(self.flock)
-        #flock.kill()
-        #print(x,y)
-        #print(length) #LENGTH IS OFF, FIX
-
-        #new = ZippedBird(self, length,self.fromBiggiePoint((x, y)))
-        #new.stationary = True
-        #self.tower.add(new)
 
         "handle apply_invincible"
         if self.invincible:
@@ -228,13 +224,14 @@ class Game:
 
             if scrolling:
                 self.screen_height += self.scroll
+                print(self.calcScreenRect())
             self.allsprites.update()
             #self.bigSurface.blit(self.background, self.calcScreenRect()) # TODO: pass area Rect to display only part of it
-            self.allsprites.clear(self.bigSurface,self.background)
+            cleared = self.allsprites.clear(self.bigSurface,self.background)
             dir = self.allsprites.draw(self.bigSurface) #TODO: ONLY DRAW ONES ONSCREEN BY SUBCLASSING GROUP
             # TODO: draw to bigsurface, not screen
             screenRect = self.calcScreenRect()
-            onScreen = [d for d in dir if screenRect.contains(d)]# only blit the ones on screen
+            onScreen = [d for d in dir if screenRect.contains(d)] + cleared# only blit the ones on screen
             if scrolling:
                 #self.screen_height += self.scroll# move up screen
                 onScreen = [Rect(d.left - abs(self.scroll)*2, d.top - abs(self.scroll)*2, d.right+ abs(self.scroll)*2, d.bottom + abs(self.scroll)*2) for d in onScreen] # correct dirty rectangles
