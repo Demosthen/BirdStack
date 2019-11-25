@@ -157,11 +157,6 @@ class ZippedBird(pygame.sprite.Sprite):
                 newpos = self.rect.move((self.move, 0))
         self.rect = newpos
 
-    def load_spliced_image(self, bird, length):#TODO: bird is a string, length is length of image
-        #YOUR CODE HERE
-        return Load.load_image(bird)
-
-
     def apply_effect(self):
         self.special_marker = self.rect.right - self.bird_size[0] if self.on_right else self.rect.left + self.bird_size[0] #position of the end of special bird block
         print(self.special_marker, self.rect.left, self.rect.right)
@@ -232,10 +227,13 @@ class ZippedBird(pygame.sprite.Sprite):
     def make_long_img(self, img, length):
         num_imgs = length // img.get_width()
         leftover = int(length % img.get_width())
-        full_list = [img] * num_imgs
+        full_list = []
+        for i in range(num_imgs):
+            full_list.append(img)
         if leftover > 0:
             leftoverSurf = pygame.Surface(img.get_size())
             leftoverSurf.blit(img, (0,0))
-            pygame.transform.scale(leftoverSurf, (leftover, img.get_height()))
+            leftoverSurf = pygame.transform.scale(leftoverSurf, (leftover, img.get_height()))
+            print(leftoverSurf.get_size())
             full_list.append(leftoverSurf)
         return self.splice_image(full_list)

@@ -6,6 +6,7 @@ from Load import *
 from ZippedBird import *
 from CustomGroup import *
 from GuiSprites import *
+import random
 
 class Game:
     def __init__(self, screensize = (468,468)):
@@ -138,14 +139,17 @@ class Game:
         self.right_bound = min(right, self.right_bound) #resets left and right bounds
         self.left_bound = max(left, self.left_bound)
 
-
+        screen_width = self.screen.get_width()
+        left_spawn_edge = screen_width//5
+        right_spawn_edge = 4*screen_width//5
         "handle apply_invincible"
         if self.invincible:
-            moving = ZippedBird(self,468,self.fromBiggiePoint((200, y-50)))
+            moving = ZippedBird(self,self.screen.get_with,self.fromBiggiePoint((200, y-50)))
             self.invincible = False
             print(moving.length)
         else:
-            moving = ZippedBird(self,length,self.fromBiggiePoint((200, y-50)))
+            moving = ZippedBird(self,length,self.fromBiggiePoint((random.uniform(left_spawn_edge, right_spawn_edge), y-50)))
+            moving.move *= 2*(random.random() >= 0.5)-1# multiply by 1 with probability 0.5, by -1 with probability 0.5
         print("bird_type: ", moving.bird_type)
         print(len(self.tower.sprites()),len(self.murdered.sprites()), len(self.allsprites.sprites()) )
         self.turns += 1
