@@ -34,7 +34,7 @@ class GuiSprites(pygame.sprite.Sprite):
         screen = pygame.display.get_surface()
         startPos = self.gui_display[self.type]
         self.rect.center = self.game.translatePoint(startPos)
-
+        self.onScreen =True
         self.group = [game.gui,game.allsprites]
         for each in self.group:
             each.add(self)

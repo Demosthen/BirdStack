@@ -43,6 +43,7 @@ class CustomGroup(pygame.sprite.RenderUpdates):#TODO: ALL OF IT
            if type(s) == SquidInk:
                draw_sprite(s)
        return dirty
+
     def clear(self, surface, bgd):
         """erase the previous position of all sprites
         Group.clear(surface, bgd): return list of Rects
