@@ -10,6 +10,8 @@ import math
 import random
 import pymunk
 from pymunk import Vec2d
+
+#if invincible, do not want special birds in the zipbird
 class Game:
     def __init__(self, screensize = (468,468)):
         self.bird_density = "placeholder"
