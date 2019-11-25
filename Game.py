@@ -34,16 +34,6 @@ class Game:
         self.background.fill((250,250,250))
         self.paused = False
         self.screen_height = 0
-        # if pygame.font:
-        #     font = pygame.font.Font(None, 36)
-        #     text = font.render("STACK THE BIRDSSSSSSSS", 1, (10, 10, 10))
-        #     textpos = text.get_rect()
-        #     textpos.center = self.translatePoint((self.screen.get_width()/2,10))
-        #     score = font.render("Score: "+ str(self.score), True, (10, 10, 10))
-        #     scorepos = score.get_rect()#this is unfinished
-        #     scorepos.topright = self.translatePoint((screensize[0]-25,25))
-        #     self.background.blit(text, textpos)
-            #self.background.blit(score, scorepos)
         self.bigSurface.blit(self.background, (0,0)) # TODO: pass area Rect to display only part of it
         self.screen.blit(self.bigSurface, (0,0), area = self.calcScreenRect())
         pygame.display.flip()
