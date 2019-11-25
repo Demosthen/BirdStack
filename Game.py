@@ -6,6 +6,7 @@ from Load import *
 from ZippedBird import *
 from CustomGroup import *
 from GuiSprites import *
+import math
 import random
 
 class Game:
@@ -149,10 +150,14 @@ class Game:
             print(moving.length)
         else:
             moving = ZippedBird(self,length,self.fromBiggiePoint((200, y-50)))
-            moving.move *= 2*(random.random() >= 0.5)-1# multiply by 1 with probability 0.5, by -1 with probability 0.5
+            moving.move_right = 2*(random.random() >= 0.5)-1# 1 (right) with probability 0.5, -1 (left) with probability 0.5
+        left_spawn_edge = math.ceil(moving.rect.width/2)
+        right_spawn_edge = screen_width - math.ceil(moving.rect.width/2)
+        moving.relocate(self.fromBiggiePoint((int(random.uniform(left_spawn_edge, right_spawn_edge)), y-50)))
         print("bird_type: ", moving.bird_type)
         print(len(self.tower.sprites()),len(self.murdered.sprites()), len(self.allsprites.sprites()) )
         self.turns += 1
+        ZippedBird.move+=1
         if not self.manual:
             self.scroll = self.auto_scroll
         self.scroll_dur += flock.rect.height//self.scroll
@@ -188,8 +193,9 @@ class Game:
     def endGame(self):#TODO: do the downward scroll, generate the dead bird pile, etc
         #YOUR CODE HERE
         for each in self.gui.sprites():
-            if each.type != "TITLE":
-                each.kill()
+            #if each.type != "TITLE":
+            each.kill()
+        title = GuiSprites(self,"TITLE")
         final_score = GuiSprites(self,"FINAL_SCORE")
         birds_killed = GuiSprites(self,"BIRDS_KILLED")
         final_restart = GuiSprites(self,"FINAL_RESTART")
