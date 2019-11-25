@@ -8,6 +8,7 @@ from SquidInk import *
 
 class ZippedBird(pygame.sprite.Sprite):
     move = 3
+    orig_move = 3
     bird_size = (50,50)
     image_dict = {"BIRDIE": "new_birdie.png",
                     "FATSO": "new_fatso.png",
@@ -25,7 +26,7 @@ class ZippedBird(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.length = length
         self.game = game
-
+        self.move_right  = 1 # 1 if right, -1 if left
         self.left_prob_dict = {"BIRDIE": 3,
                         "FATSO": 1,
                         "SQUIDDY": 1,
@@ -149,12 +150,12 @@ class ZippedBird(pygame.sprite.Sprite):
 
     def fly(self):
         """move the bird across the screen, and bounce at the ends"""
-        newpos = self.rect.move((self.move, 0))
+        newpos = self.rect.move((self.move * self.move_right, 0))
         if not self.area.contains(newpos):
             if self.rect.left < self.area.left or \
                     self.rect.right > self.area.right:
-                self.move = -self.move
-                newpos = self.rect.move((self.move, 0))
+                self.move_right = - self.move_right
+                newpos = self.rect.move((self.move * self.move_right, 0))
         self.rect = newpos
 
     def apply_effect(self):
