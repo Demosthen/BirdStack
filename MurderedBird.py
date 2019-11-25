@@ -7,10 +7,15 @@ GRAVITY = 1
 class MurderedBird(pygame.sprite.Sprite):
     move = 3
     bird_size = (50,50)
+    image_dict = {"BIRDIE": "new_dead_birdie.png",
+                    "FATSO": "new_fatso.png",
+                    "SQUIDDY": "new_squidbird.png",
+                    "INVINCIBLE": "new_invincible.png",
+                    "TREE": "new_tree.png"}
 
 
     def __init__(self, game, startPos):
-
+        #need add type
         pygame.sprite.Sprite.__init__(self)
         self.groups = [game.allsprites,game.murdered]
         self.image, self.rect = load_image('new_dead_birdie.png', -1, self.bird_size)
