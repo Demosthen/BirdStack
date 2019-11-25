@@ -26,7 +26,7 @@ class ZippedBird(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.length = length
         self.game = game
-
+        self.move_right = 1
         self.left_prob_dict = {"BIRDIE": 10,
                         "FATSO": 2.5,
                         "SQUIDDY": 1.5,

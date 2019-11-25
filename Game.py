@@ -8,7 +8,8 @@ from CustomGroup import *
 from GuiSprites import *
 import math
 import random
-
+import pymunk
+from pymunk import Vec2d
 class Game:
     def __init__(self, screensize = (468,468)):
         self.bird_density = "placeholder"
@@ -54,10 +55,17 @@ class Game:
         #self.squiddy_time = 1500
         self.turns = 0
         self.invincible = False
-        self.manual = False
+        self.manual = False# manual control of scrolling
+        self.space = pymunk.Space()
+        self.space.gravity = Vec2d(0.0, GRAVITY)
+        self.edges = [pymunk.Segment(self.space.static_body, Vec2d(0,0), Vec2d(0,self.bigSurface.get_height()), 1),
+                        pymunk.Segment(self.space.static_body, Vec2d(0, self.bigSurface.get_height()), Vec2d(self.bigSurface.get_width(),self.bigSurface.get_height()), 1),
+                        pymunk.Segment(self.space.static_body, Vec2d(self.bigSurface.get_width(), self.bigSurface.get_height()), Vec2d(self.bigSurface.get_width(), 0), 1)
+                        ]
+        self.space.add(self.edges)
 
     def calcScreenRect(self):# calculate the screen's rect within bigSurface
-        return Rect(0, self.bigSurface.get_height()- self.screen.get_height() -self.screen_height, self.screen.get_width(), self.screen.get_height())
+        return Rect(0, self.bigSurface.get_height() - self.screen.get_height() -self.screen_height, self.screen.get_width(), self.screen.get_height())
 
     def translateRect(self, rect):#translate a rect from screen coordinates to bigSurface coordinates
         screenRect = self.calcScreenRect()
@@ -189,6 +197,14 @@ class Game:
 
 
         #pass
+    def updatePhysics(self, dt):
+        # Here we use a very basic way to keep a set space.step dt.
+        # For a real game its probably best to do something more complicated.
+        step_dt = 1/120.
+        x = 0
+        while x < dt:
+            x += step_dt
+            self.space.step(step_dt)
 
     def endGame(self):#TODO: do the downward scroll, generate the dead bird pile, etc
         #YOUR CODE HERE
@@ -219,6 +235,7 @@ class Game:
         while play:
             stopped = False
             self.clock.tick(60)
+            self.updatePhysics(1/60)
             #else:
                 #place, splice, drop here
                 #update screen accordingly
@@ -252,7 +269,7 @@ class Game:
                     #for sprite in self.allsprites.sprites():
                         #sprite.dropping = True
 
-                elif event.type == KEYUP and event.key == K_SPACE and len(self.zipBird.sprites()): 
+                elif event.type == KEYUP and event.key == K_SPACE and len(self.zipBird.sprites()):
                     stopped = True
                 elif event.type == MOUSEBUTTONDOWN and any(pointers):
                     x = self.gui.sprites()[pointers.index(1)]

@@ -1,12 +1,14 @@
 import pygame
+import pymunk
 from Load import *
 import Game
-
 numb_killed = 0
-GRAVITY = 1
+GRAVITY = 1000
 class MurderedBird(pygame.sprite.Sprite):
     move = 3
     bird_size = (50,50)
+    mass = 100
+
     image_dict = {"BIRDIE": "new_dead_birdie.png",
                     "FATSO": "new_dead_fatso.png",
                     "SQUIDDY": "new_dead_squidbird.png",
@@ -26,11 +28,27 @@ class MurderedBird(pygame.sprite.Sprite):
         self.rect.center = self.game.translatePoint(startPos)
         self.area = screen.get_rect()
         self.onScreen = True
+        self.moment = pymunk.moment_for_circle(self.mass, 0, max(self.bird_size)/2, (0,0))
+        self.body = pymunk.Body(self.mass, self.moment)
+        self.body.position = self.rect.center
+        self.shape = pymunk.Circle(self.body, max(self.bird_size)/2, (0,0))
+
+        self.game.space.add(self.body, self.shape)
         for each in self.groups:
             each.add(self)
 
     def update(self):
-        self.drop()
+        global numb_killed
+        self.rect.center = self.body.position
+        print(self.rect.center)
+        area = self.game.calcScreenRect()
+        if self.rect.top >= area.bottom:
+            numb_killed+=1
+            print("DEAD!", numb_killed)
+            self.game.space.remove(self.shape, self.body)
+            self.kill()
+            del self
+        #self.drop()
 
 
     def drop(self):
