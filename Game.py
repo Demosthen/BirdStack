@@ -56,10 +56,13 @@ class Game:
         self.clock = pygame.time.Clock()
         self.is_negative_length = False
         self.final_drawn = False
-        self.scroll = 5 # amount it scrolls each frame
+        self.scroll = 5 # stores actual amount it scrolls each frame (changes frequently)
+        self.auto_scroll = 5 # amount it scrolls each frame while auto scrolling
+        self.manual_scroll =  5 # amount it scrolls each frame under manual control
         #self.squiddy_time = 1500
         self.turns = 0
         self.invincible = False
+        self.manual = False
 
     def calcScreenRect(self):# calculate the screen's rect within bigSurface
         return Rect(0, self.bigSurface.get_height()- self.screen.get_height() -self.screen_height, self.screen.get_width(), self.screen.get_height())
@@ -83,12 +86,8 @@ class Game:
         screenRect = self.calcScreenRect()
         return pt[1] < screenRect.bottom
 
-    def place(self):#TODO:
-        flock = self.zipBird.sprites()[0]
-        bird_width = MurderedBird.bird_size[0]
-        left = flock.rect.left
-        right = flock.rect.right
-        if abs(self.right_bound - right) <= self.tolerance: #move it over if within certain tolerance
+    def snap(self,right, left, flock): #move it over if within certain tolerance
+        if abs(self.right_bound - right) <= self.tolerance:
             right += self.right_bound - flock.rect.right
             left += self.right_bound - flock.rect.right
             # flock.rect.move(self.right_bound - flock.rect.right, 0)
@@ -96,15 +95,10 @@ class Game:
             right += self.left_bound - flock.rect.left
             left += self.left_bound - flock.rect.left
             # flock.rect.move(self.left_bound - flock.rect.left, 0)
-        flock.stationary = True
+        return right, left
 
-
-        x = (min(right, self.right_bound) + max(left, self.left_bound))/2
-        #x = flock.rect.centerx
-        y = flock.rect.centery
-
-
-        #FIX MUDRDERED BIRDS
+    def murderBirds(self, right, left, flock):# add appropriate murdered birds
+        bird_width = MurderedBird.bird_size[0]
         if (right - self.right_bound > 0.2*bird_width): #change to whatever fraction of the thing counts as a bird
             for i in range(round((right - self.right_bound)/bird_width)):
                 print(i)
@@ -115,8 +109,17 @@ class Game:
                 print(i)
                 self.murdered.add(MurderedBird(self,self.fromBiggiePoint((left-+20*(i+1), flock.rect.y))))
 
-        length = min(right, self.right_bound) - max(left, self.left_bound) #resize
+    def place(self):#TODO:
+        flock = self.zipBird.sprites()[0]
 
+        left = flock.rect.left
+        right = flock.rect.right
+        right, left = self.snap(right, left, flock)#move it over if within certain tolerance
+        flock.stationary = True
+        x = (min(right, self.right_bound) + max(left, self.left_bound))/2
+        y = flock.rect.centery
+        self.murderBirds(right, left, flock)
+        length = min(right, self.right_bound) - max(left, self.left_bound) #resize
         print("placed:", flock.bird_type)
         flock.place(self.left_bound, self.right_bound, length)
         if flock.bird_type != "BIRDIE": #apply special effect if it's not normal bird
@@ -142,6 +145,10 @@ class Game:
         print("bird_type: ", moving.bird_type)
         print(len(self.tower.sprites()),len(self.murdered.sprites()), len(self.allsprites.sprites()) )
         self.turns += 1
+        if not self.manual:
+            self.scroll = self.auto_scroll
+        self.scroll_dur += flock.rect.height//self.scroll
+
         print("turn: ", self.turns)
 
 
@@ -172,7 +179,7 @@ class Game:
 
     def run(self):
         length = self.right_bound-self.left_bound
-        scrolling = False
+        self.scroll_dur = 0
         play = True
         base = ZippedBird(self,length,(self.screen.get_width()/2,self.screen.get_height()-100))
         base.stationary = True
@@ -186,8 +193,6 @@ class Game:
         score = GuiSprites(self,"SCORE")
         while play:
             stopped = False
-            #print(len(self.zipBird.sprites()))
-            #print(len(self.allsprites.sprites()))
             self.clock.tick(60)
             #else:
                 #place, splice, drop here
@@ -202,10 +207,20 @@ class Game:
                     return "END"
                 elif event.type == KEYDOWN and event.key == K_ESCAPE:
                     return "END"
-                elif event.type == KEYDOWN and event.key == K_s:
-                    scrolling = True
-                elif event.type == KEYUP and event.key == K_s:
-                    scrolling = False
+                elif event.type == KEYDOWN and event.key == K_UP:
+                    self.scroll_dur = 1000000
+                    self.scroll = self.manual_scroll
+                    self.manual = True
+                elif event.type == KEYUP and event.key == K_UP:
+                    self.scroll_dur = 0
+                    self.manual = False
+                elif event.type == KEYDOWN and event.key == K_DOWN:
+                    self.scroll_dur = 1000000
+                    self.scroll = -self.manual_scroll
+                    self.manual = True
+                elif event.type == KEYUP and event.key == K_DOWN:
+                    self.scroll_dur = 0
+                    self.manual = False
                 #elif event.type == MOUSEBUTTONDOWN:
                     #self.allsprites.add(MurderedBird(self))
                 #elif event.type == MOUSEBUTTONUP:
@@ -232,9 +247,10 @@ class Game:
                 # TODO: draw to bigsurface, not screen
                 screenRect = self.calcScreenRect()
                 onScreen = [d for d in dir if screenRect.contains(d)] + cleared# only blit the ones on screen
-                if scrolling:
+                if self.scroll_dur:
                     #self.screen_height += self.scroll# move up screen
-                    onScreen = [Rect(d.left - abs(self.scroll)*2, d.top - abs(self.scroll)*2, d.right+ abs(self.scroll)*2, d.bottom + abs(self.scroll)*2) for d in onScreen] # correct dirty rectangles
+                    self.scroll_dur -= 1
+                    onScreen = [Rect(d.left, d.top - abs(self.scroll), d.width, d.height + 2*abs(self.scroll)) for d in onScreen] # correct dirty rectangles
                 #self.screen.blit(self.bigSurface, (0,0), screenRect)
                 self.screen.blits([(self.bigSurface, self.fromBiggie(d), d) for d in onScreen])
                 pygame.display.update([self.fromBiggie(d) for d in onScreen])
@@ -243,7 +259,8 @@ class Game:
                 displayGroup(self.gui)
             else:
                 #update score; code already above
-                if scrolling:
-                    self.screen_height += self.scroll
+                if self.scroll_dur:
+                    self.screen_height = max(min(self.scroll+self.screen_height, self.bigSurface.get_height() - self.screen.get_height()),0)# only scroll if within bounds of
+
                 displayGroup(self.allsprites)
                 #pygame.display.flip()
