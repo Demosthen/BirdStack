@@ -100,16 +100,24 @@ class Game:
     def murderBirds(self, right, left, flock):# add appropriate murdered birds
         bird_width = MurderedBird.bird_size[0]
         if (right - self.right_bound > 0.2*bird_width): #change to whatever fraction of the thing counts as a bird
-            for i in range(round((right - self.right_bound)/bird_width)):
+            for i in range(round(min(flock.length, (right - self.right_bound))/bird_width)):
                 print(i)
-                self.murdered.add(MurderedBird(self,self.fromBiggiePoint((right+20*(i+1), flock.rect.y))))
-                self.murders["BIRDIE"]+=1
-                #TODO: check if there's a special in there so that you generate a dead one of those
+                if flock.bird_type != "BIRDIE" and ((flock.on_right and i == 0) or (not flock.on_right and i == flock.length//bird_width)):
+                    self.murdered.add(MurderedBird(self,self.fromBiggiePoint((right-bird_width*(i+1), flock.rect.y)), flock.bird_type))
+                    self.murders[flock.bird_type]+=1
+                else:
+                    self.murdered.add(MurderedBird(self,self.fromBiggiePoint((right-bird_width*(i+1), flock.rect.y)), "BIRDIE"))
+                    self.murders["BIRDIE"]+=1
+
         if (self.left_bound - left > 0.2*bird_width): #change to whatever fraction of the thing counts as a bird
-            for i in range(round((self.left_bound - left)//bird_width)):
+            for i in range(round(min(flock.length, (self.left_bound - left))/bird_width)):
                 print(i)
-                self.murdered.add(MurderedBird(self,self.fromBiggiePoint((left-+20*(i+1), flock.rect.y))))
-                self.murders["BIRDIE"]+=1
+                if flock.bird_type != "BIRDIE" and ((not flock.on_right and i == 0) or (flock.on_right and i == flock.length//bird_width)):
+                    self.murdered.add(MurderedBird(self,self.fromBiggiePoint((left+bird_width*(i+1), flock.rect.y)), flock.bird_type))
+                    self.murders[flock.bird_type]+=1
+                else:
+                    self.murdered.add(MurderedBird(self,self.fromBiggiePoint((left+bird_width*(i+1), flock.rect.y)), "BIRDIE"))
+                    self.murders["BIRDIE"]+=1
 
 
     def place(self):#TODO:
