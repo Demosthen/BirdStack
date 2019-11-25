@@ -28,17 +28,6 @@ class MurderedBird(pygame.sprite.Sprite):
         self.onScreen = self.game.checkPointOnScreen(self.rect.topleft)
         self.drop()
 
-    def fly(self):
-        """move the bird across the screen, and turn at the ends"""
-        newpos = self.rect.move((self.move, 0))
-        area = self.game.calcScreenRect()
-        if not area.contains(newpos):
-            if self.rect.left < self.area.left or \
-                    self.rect.right > self.area.right:
-                self.move = -self.move
-                newpos = self.rect.move((self.move, 0))
-                self.image = pygame.transform.flip(self.image, 1, 0)
-        self.rect = newpos
 
     def drop(self):
         """make the bird fall"""

@@ -25,6 +25,7 @@ class GuiSprites(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.type = type
         self.game = game
+        self.onScreen = True
 
         #self.get_position(type)
         type_image = self.image_dict[self.type]

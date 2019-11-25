@@ -32,6 +32,7 @@ class Game:
         self.background = pygame.Surface(self.bigSurface.get_size())
         self.background = self.background.convert()
         self.background.fill((250,250,250))
+        self.paused = False
         self.screen_height = 0
         # if pygame.font:
         #     font = pygame.font.Font(None, 36)
@@ -59,10 +60,6 @@ class Game:
         #self.squiddy_time = 1500
         self.turns = 0
         self.invincible = False
-        #TODO: initialize with ZippedBird base
-        #TODO: add GUI BUTTONS (PLAY/PAUSE, SCORE, RESTART)
-        #TODO: actually make the zippedbird when you start the game
-        #self.flock = ZippedBird(self, (100,100)) #TODO: please change this
 
     def calcScreenRect(self):# calculate the screen's rect within bigSurface
         return Rect(0, self.bigSurface.get_height()- self.screen.get_height() -self.screen_height, self.screen.get_width(), self.screen.get_height())
@@ -87,8 +84,6 @@ class Game:
         return pt[1] < screenRect.bottom
 
     def place(self):#TODO:
-        #YOUR CODE HERE
-        #check if there are special birds there that do stuff and do their effect
         flock = self.zipBird.sprites()[0]
         bird_width = MurderedBird.bird_size[0]
         left = flock.rect.left
@@ -114,27 +109,13 @@ class Game:
             for i in range(round((right - self.right_bound)/bird_width)):
                 print(i)
                 self.murdered.add(MurderedBird(self,self.fromBiggiePoint((right+20*(i+1), flock.rect.y))))
-                #pygame.time.wait(100)
-
                 #TODO: check if there's a special in there so that you generate a dead one of those
-
         if (self.left_bound - left > 0.2*bird_width): #change to whatever fraction of the thing counts as a bird
             for i in range(round((self.left_bound - left)//bird_width)):
                 print(i)
                 self.murdered.add(MurderedBird(self,self.fromBiggiePoint((left-+20*(i+1), flock.rect.y))))
-                #pygame.time.wait(100)
 
         length = min(right, self.right_bound) - max(left, self.left_bound) #resize
-
-        #FIX MUDRDERED BIRDS
-        # if (self.right_bound - flock.rect.right > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
-        #     for i in range((self.right_bound - flock.rect.right)//bird_width):
-        #         self.murdered.add(MurderedBird(self,(flock.rect.right - bird_width*i, flock.rect.y)))
-        #         #TODO: check if there's a special in there so that you generate a dead one of those
-        #
-        # if (flock.rect.left - self.left_bound > 0.4*bird_width): #change to whatever fraction of the thing counts as a bird
-        #     for i in range((flock.rect.left - self.right_bound)//bird_width):
-        #         self.murdered.add(MurderedBird(self,(flock.rect.left + bird_width*i, flock.rect.y)))
 
         print("placed:", flock.bird_type)
         flock.place(self.left_bound, self.right_bound, length)
@@ -171,14 +152,17 @@ class Game:
         create a newZippedBird"""
 
 
-    def check_GUI(gui): #pause/play, restart; sprites, will get added into allsprites
+    def check_GUI(self,gui): #pause/play, restart; sprites, will get added into allsprites
         if gui.type == "PAUSE":
             gui.kill()
             new = GuiSprites(self, "PLAY")
+            self.paused = True
         if gui.type == "PLAY":
             gui.kill()
             new = GuiSprites(self, "PAUSE")
-        #if gui.type == "RESTART":
+            self.paused = False
+        if gui.type == "RESTART":
+            return "RESTART"
 
         #pass
 
@@ -211,13 +195,13 @@ class Game:
                 #check if game has ended
             #self.check_GUI()
             cursor_pos = self.translatePoint(pygame.mouse.get_pos())
-            print("cursor_pos", cursor_pos)
             #cursor_rect = Rect(cursor_pos[0]-1,cursor_pos[1]+1,2,2)
+            pointers = [each.rect.collidepoint(cursor_pos) for each in self.gui.sprites()]
             for event in pygame.event.get():
                 if event.type == QUIT:
-                    return
+                    return "END"
                 elif event.type == KEYDOWN and event.key == K_ESCAPE:
-                    return
+                    return "END"
                 elif event.type == KEYDOWN and event.key == K_s:
                     scrolling = True
                 elif event.type == KEYUP and event.key == K_s:
@@ -228,31 +212,38 @@ class Game:
                     #for sprite in self.allsprites.sprites():
                         #sprite.dropping = True
 
-                elif event.type == MOUSEBUTTONDOWN and not any([each.rect.collidepoint(cursor_pos) for each in self.gui.sprites()]):
+                elif event.type == MOUSEBUTTONDOWN and not any(pointers): #there is no "play" sprite
                     stopped = True
+                elif event.type == MOUSEBUTTONDOWN and any(pointers):
+                    x = self.gui.sprites()[pointers.index(1)]
+                    print(x.type)
+                    if self.check_GUI(x) == "RESTART":
+                        return "RESTART"
 
             if stopped:
                 if self.place():
                     self.endGame()
 
+            def displayGroup(group):
+                group.update()
+                #self.bigSurface.blit(self.background, self.calcScreenRect()) # TODO: pass area Rect to display only part of it
+                cleared = group.clear(self.bigSurface,self.background)
+                dir = group.draw(self.bigSurface) #TODO: ONLY DRAW ONES ONSCREEN BY SUBCLASSING GROUP
+                # TODO: draw to bigsurface, not screen
+                screenRect = self.calcScreenRect()
+                onScreen = [d for d in dir if screenRect.contains(d)] + cleared# only blit the ones on screen
+                if scrolling:
+                    #self.screen_height += self.scroll# move up screen
+                    onScreen = [Rect(d.left - abs(self.scroll)*2, d.top - abs(self.scroll)*2, d.right+ abs(self.scroll)*2, d.bottom + abs(self.scroll)*2) for d in onScreen] # correct dirty rectangles
+                #self.screen.blit(self.bigSurface, (0,0), screenRect)
+                self.screen.blits([(self.bigSurface, self.fromBiggie(d), d) for d in onScreen])
+                pygame.display.update([self.fromBiggie(d) for d in onScreen])
 
-
-
-            #update score; code already above
-            if scrolling:
-                self.screen_height += self.scroll
-                print(self.calcScreenRect())
-            self.allsprites.update()
-            #self.bigSurface.blit(self.background, self.calcScreenRect()) # TODO: pass area Rect to display only part of it
-            cleared = self.allsprites.clear(self.bigSurface,self.background)
-            dir = self.allsprites.draw(self.bigSurface) #TODO: ONLY DRAW ONES ONSCREEN BY SUBCLASSING GROUP
-            # TODO: draw to bigsurface, not screen
-            screenRect = self.calcScreenRect()
-            onScreen = [d for d in dir if screenRect.contains(d)] + cleared# only blit the ones on screen
-            if scrolling:
-                #self.screen_height += self.scroll# move up screen
-                onScreen = [Rect(d.left - abs(self.scroll)*2, d.top - abs(self.scroll)*2, d.right+ abs(self.scroll)*2, d.bottom + abs(self.scroll)*2) for d in onScreen] # correct dirty rectangles
-            #self.screen.blit(self.bigSurface, (0,0), screenRect)
-            self.screen.blits([(self.bigSurface, self.fromBiggie(d), d) for d in onScreen])
-            pygame.display.update([self.fromBiggie(d) for d in onScreen])
-            #pygame.display.flip()
+            if self.paused:
+                displayGroup(self.gui)
+            else:
+                #update score; code already above
+                if scrolling:
+                    self.screen_height += self.scroll
+                displayGroup(self.allsprites)
+                #pygame.display.flip()
