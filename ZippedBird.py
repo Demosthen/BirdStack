@@ -26,15 +26,15 @@ class ZippedBird(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.length = length
         self.game = game
-        self.move_right  = 1 # 1 if right, -1 if left
-        self.left_prob_dict = {"BIRDIE": 3,
-                        "FATSO": 1,
-                        "SQUIDDY": 1,
+
+        self.left_prob_dict = {"BIRDIE": 10,
+                        "FATSO": 2.5,
+                        "SQUIDDY": 1.5,
                         "INVINCIBLE": 1,
                         "TREE": 1}
-        self.right_prob_dict = {"BIRDIE": 3,
-                        "FATSO": 1,
-                        "SQUIDDY": 1,
+        self.right_prob_dict = {"BIRDIE": 10,
+                        "FATSO": 2.5,
+                        "SQUIDDY": 1.5,
                         "INVINCIBLE": 1,
                         "TREE": 1}
         self.effect_dict = { "FATSO": self.apply_fatso,
@@ -120,14 +120,14 @@ class ZippedBird(pygame.sprite.Sprite):
         self.left_prob_dict["BIRDIE"] = 2
         if self.game.left_bound<50:
             self.left_prob_dict["TREE"] = 0
-            self.left_prob_dict["FATSO"] = 1.5
-            self.left_prob_dict["SQUIDDY"] = 1
-            self.left_prob_dict["INVINCIBLE"] = 0
-        elif self.game.right_bound - self.game.left_bound > 350:
-            self.left_prob_dict["SQUIDDY"] = 1
+            self.left_prob_dict["FATSO"]+= 2
+        elif self.game.left_bound > 234:
+            self.left_prob_dict["TREE"] += 1
+        if self.game.right_bound - self.game.left_bound > 100:
+            self.left_prob_dict["SQUIDDY"]+=0.5
         else:
-            self.left_prob_dict["SQUIDDY"]=0.25
-            self.left_prob_dict["INVINCIBLE"]=0.25
+            self.left_prob_dict["SQUIDDY"]-=0.5
+            self.left_prob_dict["INVINCIBLE"]+=1
 
         if self.game.right_bound - self.game.left_bound < self.bird_size[0]:
             for key, val in self.need_append.items():
@@ -136,15 +136,16 @@ class ZippedBird(pygame.sprite.Sprite):
 
     def updateRightProb(self):
         #YOUR CODE HERE
-        self.left_prob_dict["BIRDIE"]=2
-        if self.game.right_bound>400:
+        if self.game.right_bound>418:
             self.right_prob_dict["TREE"] = 0
-            self.right_prob_dict["FATSO"]= 1.5
+            self.right_prob_dict["FATSO"]+= 2
+        elif self.game.right_bound < 234:
+            self.right_prob_dict["TREE"] += 1
         if self.game.right_bound - self.game.left_bound > 100:
-            self.right_prob_dict["SQUIDDY"]=0.25
+            self.right_prob_dict["SQUIDDY"]+=0.5
         else:
-            self.right_prob_dict["SQUIDDY"]=0.25
-            self.right_prob_dict["INVINCIBLE"]=0.25
+            self.right_prob_dict["SQUIDDY"]-=0.5
+            self.right_prob_dict["INVINCIBLE"]+=1
 
 
         if self.game.right_bound - self.game.left_bound < self.bird_size[0]:
@@ -235,10 +236,9 @@ class ZippedBird(pygame.sprite.Sprite):
         full_list = []
         for i in range(num_imgs):
             full_list.append(img)
-        if leftover > 0:
-            leftoverSurf = pygame.Surface(img.get_size())
-            leftoverSurf.blit(img, (0,0))
-            leftoverSurf = pygame.transform.scale(leftoverSurf, (leftover, img.get_height()))
-            print(leftoverSurf.get_size())
-            full_list.append(leftoverSurf)
+        leftoverSurf = pygame.Surface(img.get_size())
+        leftoverSurf.blit(img, (0,0))
+        leftoverSurf = pygame.transform.scale(leftoverSurf, (leftover, img.get_height()))
+        print(leftoverSurf.get_size())
+        full_list.append(leftoverSurf)
         return self.splice_image(full_list)

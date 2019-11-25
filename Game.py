@@ -157,7 +157,7 @@ class Game:
         print("bird_type: ", moving.bird_type)
         print(len(self.tower.sprites()),len(self.murdered.sprites()), len(self.allsprites.sprites()) )
         self.turns += 1
-        ZippedBird.move+=1
+        ZippedBird.move = ZippedBird.orig_move + int(math.sqrt(self.turns))
         if not self.manual:
             self.scroll = self.auto_scroll
         self.scroll_dur += flock.rect.height//self.scroll
