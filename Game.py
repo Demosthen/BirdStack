@@ -115,8 +115,11 @@ class Game:
                 print(i)
                 self.murdered.add(MurderedBird(self,self.fromBiggiePoint((left-+20*(i+1), flock.rect.y))))
 
-        length = min(right, self.right_bound) - max(left, self.left_bound) #resize
+        length = min(right, self.right_bound) - max(left, self.left_bound)#resize
 
+        if length < 5 or self.is_negative_length:
+            flock.kill()
+            return "u suck u lose"
         print("placed:", flock.bird_type)
         flock.place(self.left_bound, self.right_bound, length)
         if flock.bird_type != "BIRDIE": #apply special effect if it's not normal bird
@@ -128,9 +131,7 @@ class Game:
 
         self.right_bound = min(right, self.right_bound) #resets left and right bounds
         self.left_bound = max(left, self.left_bound)
-        if length < 5 or self.is_negative_length:
-            flock.kill()
-            return "u suck u lose"
+
 
         "handle apply_invincible"
         if self.invincible:
@@ -143,6 +144,7 @@ class Game:
         print(len(self.tower.sprites()),len(self.murdered.sprites()), len(self.allsprites.sprites()) )
         self.turns += 1
         print("turn: ", self.turns)
+        self.score = len(self.tower.sprites())-1
 
 
     """if (some key down):
@@ -168,6 +170,11 @@ class Game:
 
     def endGame(self):#TODO: do the downward scroll, generate the dead bird pile, etc
         #YOUR CODE HERE
+        for each in self.gui.sprites():
+            if each.type != "TITLE":
+                each.kill()
+
+
         pass
 
     def run(self):
@@ -212,7 +219,7 @@ class Game:
                     #for sprite in self.allsprites.sprites():
                         #sprite.dropping = True
 
-                elif event.type == MOUSEBUTTONDOWN and not any(pointers): #there is no "play" sprite
+                elif event.type == MOUSEBUTTONDOWN and not any(pointers) and len(self.zipBird.sprites()): #there is no "play" sprite
                     stopped = True
                 elif event.type == MOUSEBUTTONDOWN and any(pointers):
                     x = self.gui.sprites()[pointers.index(1)]
@@ -222,7 +229,9 @@ class Game:
 
             if stopped:
                 if self.place():
+                    print("hi")
                     self.endGame()
+
 
             def displayGroup(group):
                 group.update()

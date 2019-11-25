@@ -35,12 +35,18 @@ class GuiSprites(pygame.sprite.Sprite):
         startPos = self.gui_display[self.type]
         self.rect.center = self.game.translatePoint(startPos)
         self.onScreen =True
-        self.group = [game.gui,game.allsprites]
+        self.group = [game.allsprites,game.gui]
         for each in self.group:
             each.add(self)
-
+        self.font = pygame.font.SysFont("Calibri", 24)
+        if self.type == "SCORE":
+            textSurf = self.font.render(str(self.game.score), 1, (255,223,0))
+            self.image.blit (textSurf,  ( 70, 10) )
 
     def update(self):
+        if self.type == "SCORE":
+            self.kill()
+            new = GuiSprites(self.game,"SCORE")
         screen = pygame.display.get_surface()
         startPos = self.gui_display[self.type]
         self.rect.center = self.game.translatePoint(startPos)
