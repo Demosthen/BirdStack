@@ -9,3 +9,5 @@ class Denero(pygame.sprite.Sprite):
         self.rect.bottom = self.game.bigSurface.get_rect().bottom
         self.rect.left = 0
         self.onScreen = True
+    def update(self):
+        self.rect.center = self.game.translatePoint((self.game.screen.get_width()//2, self.game.screen.get_height()//2))
