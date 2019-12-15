@@ -19,6 +19,7 @@ class Game:
         self.screen = pygame.display.set_mode(screensize)
         self.left_bound = self.screen.get_width()//2-100 #top layer left_bound
         self.right_bound = self.screen.get_width()//2+100 #top layer right_bound
+        fine= 2.0
         self.murders = {"BIRDIE": 0,
                         "FATSO": 0,
                         "SQUIDDY": 0,
@@ -64,6 +65,9 @@ class Game:
                         pymunk.Segment(self.space.static_body, Vec2d(0, self.bigSurface.get_height()), Vec2d(self.bigSurface.get_width(),self.bigSurface.get_height()), 1),
                         pymunk.Segment(self.space.static_body, Vec2d(self.bigSurface.get_width(), self.bigSurface.get_height()), Vec2d(self.bigSurface.get_width(), 0), 1)
                         ]
+        for e in self.edges:
+            e.elasticity = 1.0
+            e.friction = 0
         self.space.add(self.edges)
 
     def calcScreenRect(self):# calculate the screen's rect within bigSurface

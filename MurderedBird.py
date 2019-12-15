@@ -33,7 +33,8 @@ class MurderedBird(pygame.sprite.Sprite):
         self.body = pymunk.Body(self.mass, self.moment)
         self.body.position = self.rect.center
         self.shape = pymunk.Circle(self.body, max(self.bird_size)/2, (0,0))
-
+        self.shape.elasticity = 1
+        self.friction = 0
         self.game.space.add(self.body, self.shape)
         for each in self.groups:
             each.add(self)
