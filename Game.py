@@ -6,6 +6,7 @@ from Load import *
 from ZippedBird import *
 from CustomGroup import *
 from GuiSprites import *
+from Denero import *
 import math
 import random
 import pymunk
@@ -17,7 +18,7 @@ class Game:
         self.bird_density = "placeholder"
         self.score = 0
         self.screen = pygame.display.set_mode(screensize)
-        #self.denero = Load.load_image("denero.jpg", -1, ())[0]
+
         self.left_bound = self.screen.get_width()//2-100 #top layer left_bound
         self.right_bound = self.screen.get_width()//2+100 #top layer right_bound
         fine= 2.0
@@ -41,11 +42,14 @@ class Game:
         self.background.fill((250,250,250))
         self.paused = False
         self.screen_height = 0
-        self.bigSurface.blit(self.background, (0,0)) # TODO: pass area Rect to display only part of it
+
+        self.bigSurface.blit(self.background, (0,0))
         self.screen.blit(self.bigSurface, (0,0), area = self.calcScreenRect())
         pygame.display.flip()
         self.tolerance = 10# TODO: ADJUST LATER
         self.allsprites = CustomGroup(self)
+
+        self.denero = Denero(self, (self.screen.get_width(), int(self.screen.get_height())))
         self.murdered = CustomGroup(self)
         self.tower = CustomGroup(self)
         self.zipBird = pygame.sprite.GroupSingle()
