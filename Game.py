@@ -198,8 +198,6 @@ class Game:
 
         #pass
     def updatePhysics(self, dt):
-        # Here we use a very basic way to keep a set space.step dt.
-        # For a real game its probably best to do something more complicated.
         step_dt = 1/120.
         x = 0
         while x < dt:
