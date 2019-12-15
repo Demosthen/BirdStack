@@ -17,6 +17,7 @@ class Game:
         self.bird_density = "placeholder"
         self.score = 0
         self.screen = pygame.display.set_mode(screensize)
+        #self.denero = Load.load_image("denero.jpg", -1, ())[0]
         self.left_bound = self.screen.get_width()//2-100 #top layer left_bound
         self.right_bound = self.screen.get_width()//2+100 #top layer right_bound
         fine= 2.0

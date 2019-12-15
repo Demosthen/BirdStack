@@ -27,15 +27,15 @@ class ZippedBird(pygame.sprite.Sprite):
         self.length = length
         self.game = game
         self.move_right = 1
-        self.left_prob_dict = {"BIRDIE": 1,
+        self.left_prob_dict = {"BIRDIE": 5,
                         "FATSO": 1,
                         "SQUIDDY": 1,
-                        "INVINCIBLE": 1100,
+                        "INVINCIBLE": 1,
                         "TREE": 1}
-        self.right_prob_dict = {"BIRDIE": 1,
+        self.right_prob_dict = {"BIRDIE": 5,
                         "FATSO": 1,
                         "SQUIDDY": 1,
-                        "INVINCIBLE": 1100,
+                        "INVINCIBLE": 1,
                         "TREE": 1}
         self.effect_dict = { "FATSO": self.apply_fatso,
                         "SQUIDDY": self.apply_squiddy,
@@ -87,7 +87,7 @@ class ZippedBird(pygame.sprite.Sprite):
             else:
                 special_right = self.rect.left + self.bird_size[0]
                 special_left = self.rect.left
-            if left_bound >= special_left or right_bound <= special_right:
+            if left_bound >= special_left + self.game.tolerance or right_bound <= special_right - self.game.tolerance:
                 print("BIRDIE!!", left_bound, special_left, right_bound, special_right)
                 self.bird_type = "BIRDIE"
                 self.image, self.rect = self.edit_image(length)
