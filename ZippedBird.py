@@ -87,7 +87,8 @@ class ZippedBird(pygame.sprite.Sprite):
             else:
                 special_right = self.rect.left + self.bird_size[0]
                 special_left = self.rect.left
-            if left_bound >= special_left + self.game.tolerance or right_bound <= special_right - self.game.tolerance:
+            if not((left_bound < special_left - self.game.tolerance and right_bound > special_right + self.game.tolerance) or
+                (special_left < left_bound and special_right > right_bound)):
                 print("BIRDIE!!", left_bound, special_left, right_bound, special_right)
                 self.bird_type = "BIRDIE"
                 self.image, self.rect = self.edit_image(length)
