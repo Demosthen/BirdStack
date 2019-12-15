@@ -27,15 +27,15 @@ class ZippedBird(pygame.sprite.Sprite):
         self.length = length
         self.game = game
         self.move_right = 1
-        self.left_prob_dict = {"BIRDIE": 10,
-                        "FATSO": 2.5,
-                        "SQUIDDY": 1.5,
-                        "INVINCIBLE": 1,
+        self.left_prob_dict = {"BIRDIE": 1,
+                        "FATSO": 1,
+                        "SQUIDDY": 1,
+                        "INVINCIBLE": 1100,
                         "TREE": 1}
-        self.right_prob_dict = {"BIRDIE": 10,
-                        "FATSO": 2.5,
-                        "SQUIDDY": 1.5,
-                        "INVINCIBLE": 1,
+        self.right_prob_dict = {"BIRDIE": 1,
+                        "FATSO": 1,
+                        "SQUIDDY": 1,
+                        "INVINCIBLE": 1100,
                         "TREE": 1}
         self.effect_dict = { "FATSO": self.apply_fatso,
                         "SQUIDDY": self.apply_squiddy,
@@ -95,6 +95,7 @@ class ZippedBird(pygame.sprite.Sprite):
         print("left:", self.rect.left, "right:", self.rect.right)
 
 
+
     def resize(self, newLength):
         new = pygame.transform.scale(self.image, (newLength, self.image.get_height()))
         self.image, self.rect = new, new.get_rect()
@@ -104,6 +105,8 @@ class ZippedBird(pygame.sprite.Sprite):
         self.rect.center = self.game.translatePoint(newLoc)
 
     def getSpecial(self):
+        if self.game.invincible:
+            return "BIRDIE", True
         on_right = random.random() >= 0.5
         probs = self.right_prob_dict if on_right else self.left_prob_dict
         total = sum(probs.values())
@@ -181,22 +184,20 @@ class ZippedBird(pygame.sprite.Sprite):
 
     def apply_fatso(self):
         if self.on_right:
-            print("right")
-            length_eaten = self.rect.right - self.special_marker # TODO: margin
+            self.length_eaten = self.rect.right - self.special_marker # TODO: margin
         else:
-            print('left')
-            length_eaten = self.special_marker - self.rect.left # TODO: margin
+            self.length_eaten = self.special_marker - self.rect.left # TODO: margin
         self.bird_type = "BIRDIE"
         #print("pos:", self.rect.left, self.rect.right)
-        print(self.length, length_eaten, self.length - 2 * length_eaten)
-        if self.length - 2 * length_eaten > 0:
-            self.length = self.length - 2 * length_eaten
-            self.image = self.edit_image(self.length, True)[0]
+        print(self.length, self.length_eaten, self.length - 2 * self.length_eaten)
+        if self.length - 2 * self.length_eaten > 0:
+            self.length = self.length - 2 * self.length_eaten
+            self.image,self.rect = self.edit_image(self.length, True)
             print("after pos:", self.rect.left, self.rect.right, self.length)
-
+            self.bird_type = "FATSO"
         else:
             self.game.is_negative_length = True
-            print("game over cuz length exceeds by ", self.length - 2 * length_eaten)
+            print("game over cuz length exceeds by ", self.length - 2 * self.length_eaten)
 
     def apply_squiddy(self):
         #Game.squiddy_clock = pygame.time.Clock()
@@ -205,19 +206,21 @@ class ZippedBird(pygame.sprite.Sprite):
         ink = SquidInk(self.game, self.ink_turn)
         ink.update()
 
-    def apply_invincible(self): #TODO: make a long block
+    def apply_invincible(self):\
         self.game.invincible = True
 
     def apply_tree(self):
         if self.on_right:
             print("right")
-            length_built = self.rect.right - self.special_marker # TODO: margin
+            self.length_built = self.rect.right - self.special_marker # TODO: margin
         else:
             print('left')
-            length_built = self.special_marker - self.rect.left
-        self.length += length_built
-        self.image, self.rect = self.edit_image(self.length, True)
+            self.length_built = self.special_marker - self.rect.left
+        self.bird_type = "BIRDIE"
+        self.length += self.length_built
+        self.image,self.rect = self.edit_image(self.length, True)
         print("after pos:", self.rect.left, self.rect.right, self.length)
+        self.bird_type = "TREE"
 
 
     def edit_image(self, length, splicing = True):

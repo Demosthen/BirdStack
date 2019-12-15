@@ -10,6 +10,8 @@ import math
 import random
 import pymunk
 from pymunk import Vec2d
+
+#if invincible, do not want special birds in the zipbird
 class Game:
     def __init__(self, screensize = (468,468)):
         self.bird_density = "placeholder"
@@ -17,6 +19,7 @@ class Game:
         self.screen = pygame.display.set_mode(screensize)
         self.left_bound = self.screen.get_width()//2-100 #top layer left_bound
         self.right_bound = self.screen.get_width()//2+100 #top layer right_bound
+        fine= 2.0
         self.murders = {"BIRDIE": 0,
                         "FATSO": 0,
                         "SQUIDDY": 0,
@@ -62,6 +65,9 @@ class Game:
                         pymunk.Segment(self.space.static_body, Vec2d(0, self.bigSurface.get_height()), Vec2d(self.bigSurface.get_width(),self.bigSurface.get_height()), 1),
                         pymunk.Segment(self.space.static_body, Vec2d(self.bigSurface.get_width(), self.bigSurface.get_height()), Vec2d(self.bigSurface.get_width(), 0), 1)
                         ]
+        for e in self.edges:
+            e.elasticity = 1.0
+            e.friction = 0
         self.space.add(self.edges)
 
     def calcScreenRect(self):# calculate the screen's rect within bigSurface
@@ -131,22 +137,49 @@ class Game:
         y = flock.rect.centery
         self.murderBirds(right, left, flock)
         length = min(right, self.right_bound) - max(left, self.left_bound) #resize
+        if length < 5:
+            flock.kill()
+            return "u suck u lose"
+        print("placed:", flock.bird_type)
 
-        if length < 5 or self.is_negative_length:
+        flock.place(self.left_bound, self.right_bound, length)
+        flock.relocate(self.fromBiggiePoint((x,y)))
+
+        if flock.bird_type != "BIRDIE": #apply special effect if it's not normal bird
+            flock.apply_effect()
+            if flock.bird_type == "TREE": #reposition the block so it doesn't get recentered but instead extended
+                if flock.on_right:
+                    flock.relocate(self.fromBiggiePoint((x + flock.length_built/2,y)))
+                else:
+                    flock.relocate(self.fromBiggiePoint((x - flock.length_built/2,y)))
+            if flock.bird_type == "FATSO": #reposition the block so it gets eaten on one side instead of recentered
+                print('relocate')
+                if flock.on_right:
+                    flock.relocate(self.fromBiggiePoint((x - flock.length_eaten,y)))
+                else:
+                    flock.relocate(self.fromBiggiePoint((x + flock.length_eaten,y)))
+
+        left = flock.rect.left
+        right = flock.rect.right
+        length = right - left
+
+        if self.is_negative_length: #check if bird is eaten nom nom
             flock.kill()
             return "u suck u lose"
 
-        print("placed:", flock.bird_type)
-        flock.place(self.left_bound, self.right_bound, length)
-        if flock.bird_type != "BIRDIE": #apply special effect if it's not normal bird
-            flock.apply_effect()
-        length = flock.length
-        flock.relocate(self.fromBiggiePoint((x,y)))
         flock.stationary = True
         self.tower.add(flock)
 
-        self.right_bound = min(right, self.right_bound) #resets left and right bounds
-        self.left_bound = max(left, self.left_bound)
+        if flock.bird_type == "TREE": #corrects and adjusts for the additional extended block if TREE bird
+            if flock.on_right:
+                self.right_bound = max(right, self.right_bound)
+                self.left_bound = max(left, self.left_bound)
+            else:
+                self.right_bound = min(right, self.right_bound)
+                self.left_bound = min(left, self.left_bound)
+        else:
+            self.right_bound = min(right, self.right_bound) #resets left and right bounds
+            self.left_bound = max(left, self.left_bound)
 
         screen_width = self.screen.get_width()
         left_spawn_edge = screen_width//5
