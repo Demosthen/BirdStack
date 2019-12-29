@@ -8,22 +8,27 @@ There are different types of birds that can be stacked, some with positive, some
 Now let's meet the birds!
 
 This is *normal birdie*:
+
 ![normal birdie](https://user-images.githubusercontent.com/55931451/71562592-2a54f480-2a37-11ea-88f5-f2a913a771cd.png)
 This one is always a friend and will make up the majority of the tower. There are no effects that come with this birdie.
 
 This is *invincible birdie*, a positive effect birdie:
+
 ![invincible birdie](https://user-images.githubusercontent.com/55931451/71562598-3e98f180-2a37-11ea-999f-2ecec2936d40.png)
 Stacking invincible birdie will cause the next layer of moving birdies to span the entire screen. There is no way to end the game with a layer of moving birds that span the entire screen, and so this birdie essentially gives a free point. 
 
 This is *tree birdie*, a positive effect birdie:
+
 ![tree birdie](https://user-images.githubusercontent.com/55931451/71562603-49ec1d00-2a37-11ea-8528-d06ff8141d9d.png)
 Tree birdie carries a branch with it at all times. When stacked, tree birdie will extend its branch and extend the previous layer of the tower by a birdie-length, extending the platform on which to stack future birdies.
 
 This is *bear birdie*, a negative effect birdie:
+
 ![bear birdie](https://user-images.githubusercontent.com/55931451/71562596-3476f300-2a37-11ea-8be1-38275fc4af16.png)
 Bear birdie carries a little bear on its head. When stacked, the bear on bear birdie's head will eat an adjacent birdie and, as opposed to tree birdie, shrink the previous layer of the tower by a birdie-length, making it harder to stack future birdies.
 
 This is *squiddy birdie*, a negative effect birdie:
+
 ![squid birdie](https://user-images.githubusercontent.com/55931451/71562604-52dcee80-2a37-11ea-9879-0a17de82667f.png)
 Squiddy birdie carries a little squid on its head. When stacked, the squid on squiddy birdie's head will squirt squid ink all over the screen, and obstruct vision for two turns.
 
