@@ -2,7 +2,11 @@
 
 Welcome to Birdstack! An all new stacking game! The objective of the game is to make the tallest tower of birds as possible! Each time you successfully stack a layer of birds, the score goes up by one. What does it mean to successfully stack a layer of birds? It means to stop the moving stack of birds, so that some part of the moving stack falls between boundaries of the previous layer in the tower, like so:
 
-Stop the game at any time with the pause button or restart button in the top right corner and the game ends when no part of the moving layer birds is stacked on the original tower.
+![starting screen](https://user-images.githubusercontent.com/55931451/71563705-d4894800-2a48-11ea-8bd5-c12a1cbf4b6a.png)
+
+![some play](https://user-images.githubusercontent.com/55931451/71563709-df43dd00-2a48-11ea-9d2d-5e236ec79ba0.png)
+
+Stop the game at any time with the pause button or restart button in the top right corner. The game ends when no part of the moving layer birds is stacked on the original tower: 
 
 There are different types of birds that can be stacked, some with positive, some negative, and some purely aesthetic effects. But no matter the effect, the entire bird must be stacked on the tower for the effect to take place.
 Now let's meet the birds!
