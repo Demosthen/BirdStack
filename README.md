@@ -8,6 +8,8 @@ Welcome to Birdstack! An all new stacking game! The objective of the game is to 
 
 Stop the game at any time with the pause button or restart button in the top right corner. The game ends when no part of the moving layer birds is stacked on the original tower: 
 
+![end screen](https://user-images.githubusercontent.com/55931451/71563726-1c0fd400-2a49-11ea-8e90-195249b0fc4d.png)
+
 There are different types of birds that can be stacked, some with positive, some negative, and some purely aesthetic effects. But no matter the effect, the entire bird must be stacked on the tower for the effect to take place.
 Now let's meet the birds!
 
@@ -41,6 +43,8 @@ This is *squiddy birdie*, a negative effect birdie:
 
 Squiddy birdie carries a little squid on its head. When stacked, the squid on squiddy birdie's head will squirt squid ink all over the screen, and obstruct vision for two turns.
 
-We made this game with PyGame and used PyMonk to simulate physics within the game. 
+We made this game with PyGame and used PyMonk to simulate physics within the game. Hope you enjoy playing it!
+
+![credit birds](https://user-images.githubusercontent.com/55931451/71563729-2df17700-2a49-11ea-8378-85bacd00a6eb.png)
 
 
